@@ -67,3 +67,25 @@ button:focus-visible {
   }
 }
 
+/* Full-height roots so our shell can center vertically */
+html, body, #root { height: 100%; }
+
+/* Stop body from meddling with layout; let our shell do the centering */
+body { display: block; }
+
+/* Ensure the root itself centers children as a fallback */
+#root {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 0; /* remove extra top padding if any */
+}
+
+/* Our main centering container */
+.auth-shell {
+  min-height: 100svh;             /* accounts for mobile UI chrome */
+  display: grid;
+  place-items: center;
+  position: relative;
+  padding: 24px;
+}

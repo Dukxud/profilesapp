@@ -6,15 +6,8 @@ export default function App() {
   return (
     <div className="auth-shell">
       {/* “Accidental” watermark in the corner */}
-      <img
-        className="brand-watermark"
-        src="/company.png"
-        alt=""
-        width={128}
-        height={128}
-        loading="lazy"
-        decoding="async"
-      />
+      <img className="brand-watermark" src="/company.png" alt="" width={128} height={128} />
+
 
 
       <Authenticator
