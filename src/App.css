@@ -51,16 +51,20 @@
   padding: 24px;
 }
 
-/* Low-key “accidental” logo in the corner */
 .brand-watermark {
   position: absolute;
   bottom: 16px;
   right: 16px;
-  width: 120px;          /* tweak as you like */
-  opacity: 0.22;         /* faint on purpose */
-  pointer-events: none;  /* purely decorative */
+  width: 128px !important;  /* hard stop */
+  height: auto !important;
+  max-width: 20vw;
+  max-height: 20vh;
+  object-fit: contain;
+  opacity: 0.22;
+  pointer-events: none;
   filter: grayscale(40%);
 }
+
 
 /* Optional: center content after sign-in, too */
 .app-authed {

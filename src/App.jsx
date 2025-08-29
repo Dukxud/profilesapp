@@ -6,7 +6,16 @@ export default function App() {
   return (
     <div className="auth-shell">
       {/* “Accidental” watermark in the corner */}
-      <img className="brand-watermark" src="/company.png" alt="" />
+      <img
+        className="brand-watermark"
+        src="/company.png"
+        alt=""
+        width={128}
+        height={128}
+        loading="lazy"
+        decoding="async"
+      />
+
 
       <Authenticator
         style={{ width: '100%', maxWidth: 420 }} // keeps the card nicely narrow
