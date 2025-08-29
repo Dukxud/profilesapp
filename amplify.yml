@@ -7,6 +7,11 @@ frontend:
         - nvm use 22.12.0
         - node -v
         - npm ci
+        # debug (optional): show where the file is
+        - echo "PWD:" && pwd && ls -la
+        # copy outputs into src for Vite to import
+        - test -f amplify_outputs.json && cp amplify_outputs.json src/amplify_outputs.json || true
+        - ls -la src
     build:
       commands:
         - npm run build
