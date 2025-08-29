@@ -40,3 +40,31 @@
 .read-the-docs {
   color: #888;
 }
+
+/* Full-page centering for the sign-in card */
+.auth-shell {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;       /* vertical center */
+  justify-content: center;   /* horizontal center */
+  position: relative;
+  padding: 24px;
+}
+
+/* Low-key “accidental” logo in the corner */
+.brand-watermark {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  width: 120px;          /* tweak as you like */
+  opacity: 0.22;         /* faint on purpose */
+  pointer-events: none;  /* purely decorative */
+  filter: grayscale(40%);
+}
+
+/* Optional: center content after sign-in, too */
+.app-authed {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 24px;
+}
