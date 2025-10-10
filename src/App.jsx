@@ -5,6 +5,7 @@ import '@aws-amplify/ui-react/styles.css';
 
 export default function App() {
   const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
 
   return (
     <div className="auth-shell">
@@ -35,6 +36,15 @@ export default function App() {
               width="280px"
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
+              isRequired
+            />
+
+            <TextField
+              label="Last name"
+              placeholder="e.g., Lovelace"
+              width="280px"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
               isRequired
             />
 
