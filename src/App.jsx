@@ -47,6 +47,8 @@ export default function App() {
               onChange={(e) => setLastName(e.target.value)}
               isRequired
             />
+            <button style={{ marginTop: 8 }} disabled={!firstName.trim()} onClick={() => localStorage.setItem('firstName', firstName.trim())}>Save first name</button>
+
 
             <div style={{ marginTop: 8 }}>Profile setup coming soon…</div>
 
