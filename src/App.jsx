@@ -4,8 +4,8 @@ import { Authenticator, View, Heading, TextField } from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
 
 export default function App() {
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
+  const [firstName, setFirstName] = useState(() => localStorage.getItem('firstName') || '');
+  const [lastName, setLastName] = useState(() => localStorage.getItem('lastName') || '');
 
   return (
     <div className="auth-shell">
