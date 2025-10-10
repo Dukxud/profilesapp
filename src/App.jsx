@@ -1,5 +1,5 @@
 // src/App.jsx
-import { Authenticator, View, Heading } from '@aws-amplify/ui-react';
+import { Authenticator, View, Heading, TextField } from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
 
 export default function App() {
@@ -25,6 +25,7 @@ export default function App() {
         {({ user, signOut }) => (
           <main className="app-authed">
             <h1>Welcome {user?.username}</h1>
+            <TextField label="First name" placeholder="e.g., Ada" width="280px" />
             <div style={{ marginTop: 8 }}>Profile setup coming soon…</div>
 
             <button onClick={signOut}>Sign out</button>
