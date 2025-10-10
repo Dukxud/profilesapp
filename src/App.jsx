@@ -8,10 +8,8 @@ export default function App() {
       {/* “Accidental” watermark in the corner */}
       <img className="brand-watermark" src="/company.png" alt="" width={128} height={128} />
 
-
-
       <Authenticator
-        style={{ width: '100%', maxWidth: 420 }} // keeps the card nicely narrow
+        style={{ width: '100%', maxWidth: 420 }}
         components={{
           Header() {
             return (
@@ -27,6 +25,8 @@ export default function App() {
         {({ user, signOut }) => (
           <main className="app-authed">
             <h1>Welcome {user?.username}</h1>
+            <div style={{ marginTop: 8 }}>Profile setup coming soon…</div>
+
             <button onClick={signOut}>Sign out</button>
           </main>
         )}
