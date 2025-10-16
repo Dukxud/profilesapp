@@ -6,6 +6,8 @@ import '@aws-amplify/ui-react/styles.css';
 export default function App() {
   const [firstName, setFirstName] = useState(() => localStorage.getItem('firstName') || '');
   const [lastName, setLastName] = useState(() => localStorage.getItem('lastName') || '');
+  const [email, setEmail] = useState(() => localStorage.getItem('email') || '');
+  const [phone, setPhone] = useState(() => localStorage.getItem('phone') || '');
   const [organization, setCompany] = useState(() => localStorage.getItem('organization') || '');
 
 
@@ -58,8 +60,23 @@ export default function App() {
               onChange={(e) => setCompany(e.target.value)}
             />
 
-
+            <TextField
+              label="Email Address"
+              placeholder="e.g., JohnDoe@gmail.com"
+              width="280px"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              isRequired
+            />
             
+            <TextField
+              label="Phone"
+              placeholder="e.g., 123-456-7890"
+              width="280px"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              isRequired
+            />
 
             <button
               style={{ marginTop: 8 }}
@@ -67,6 +84,7 @@ export default function App() {
               onClick={() => { 
                 localStorage.setItem('firstName', firstName.trim()); 
                 localStorage.setItem('lastName', lastName.trim());
+                localStorage.setItem('email', email.trim());
                 
                 if (organization.trim()) {
                   localStorage.setItem('organization', organization.trim());
