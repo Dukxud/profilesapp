@@ -231,6 +231,17 @@ export default function App() {
               Debug: models
             </button>
 
+            <button
+              style={{ marginTop: 8 }}
+              onClick={async () => {
+                const { data } = await client.models.Profile.list({ authMode: 'userPool' });
+                const p = data.at(-1);
+                alert(p ? JSON.stringify(p, null, 2) : 'No profile found');
+              }}
+            >
+              Debug: view backend profile
+            </button>
+
 
             <button onClick={signOut}>Sign out</button>
           </main>
