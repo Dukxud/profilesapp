@@ -203,8 +203,27 @@ export default function App() {
             >
               Save profile
             </button>
-            <button style={{ marginTop: 8 }} onClick={() => { alert('clicked'); client.models.Profile.list().then(({data}) => alert(`Profiles: ${data.length}`)).catch(e => alert('Error: ' + (e?.errors?.[0]?.message || e.message || 'unknown'))); }}
->Debug: count profiles</button>
+            
+            <button
+              style={{ marginTop: 8 }}
+              onClick={() => {
+                alert('clicked');
+                client.models.Profile.list({ authMode: 'userPool' })
+                  .then(({ data }) => {
+                    console.log('Profiles:', data);
+                    alert(`Profiles in backend: ${data.length}`);
+                  })
+                  .catch((e) => {
+                    console.error(e);
+                    alert('Error: ' + (e?.errors?.[0]?.message || e.message || 'unknown'));
+                  });
+              }}
+            >
+              Debug: count profiles
+            </button>
+
+
+
             <button onClick={signOut}>Sign out</button>
           </main>
         )}
