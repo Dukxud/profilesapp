@@ -170,7 +170,7 @@ export default function App() {
 
             <button
               style={{ marginTop: 8 }}
-              disabled={!firstName.trim() || !lastName.trim() || !email.trim() || !phone.trim()}
+              disabled={!firstName.trim() || !lastName.trim() || !phone.trim()}
 
               onClick={async () => { 
                 localStorage.setItem('firstName', firstName.trim()); 
