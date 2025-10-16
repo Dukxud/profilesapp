@@ -2,8 +2,12 @@
 import { useState } from 'react';
 import { Authenticator, View, Heading, TextField } from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
+import { generateClient } from 'aws-amplify/data';
+
 
 export default function App() {
+  const client = generateClient();
+
   const [firstName, setFirstName] = useState(() => localStorage.getItem('firstName') || '');
   const [lastName, setLastName] = useState(() => localStorage.getItem('lastName') || '');
   const [email, setEmail] = useState(() => localStorage.getItem('email') || '');
