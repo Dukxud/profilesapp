@@ -1,5 +1,6 @@
 // src/App.jsx
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+
 import { Authenticator, View, Heading, TextField } from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
 import { generateClient } from 'aws-amplify/data';
@@ -19,6 +20,7 @@ export default function App() {
   const [billingState, setBillingState] = useState(() => localStorage.getItem('billingState') || '');
   const [billingZip, setBillingZip] = useState(() => localStorage.getItem('billingZip') || '');
   const [billingCountry, setBillingCountry] = useState(() => localStorage.getItem('billingCountry') || '');
+  const [profileId, setProfileId] = useState(() => localStorage.getItem('profileId') || '');
 
 
   return (
@@ -76,9 +78,10 @@ export default function App() {
                 label="Email Address"
                 placeholder="e.g., JohnDoe@gmail.com"
                 width="280px"
-                value={email}
+                value={user?.attributes?.email ?? email}
                 onChange={(e) => setEmail(e.target.value)}
                 isRequired
+                isReadOnly
               />
               
               <TextField
@@ -148,10 +151,28 @@ export default function App() {
 
               <div style={{ color: 'red', marginTop: 12 }}>TODO: Add Terms of Service & Privacy Policy consent</div>
 
+
+            <button style={{ marginTop: 8 }} onClick={async () => { const { data: profiles } = await client.models.Profile.list(); const p = profiles?.[0]; if (!p) return; 
+              setProfileId(p.id); 
+              setFirstName(p.firstName ?? ''); 
+              setLastName(p.lastName ?? ''); 
+              setEmail(p.email ?? ''); 
+              setPhone(p.phone ?? ''); 
+              setCompany(p.organization ?? ''); 
+              setBillingAddress1(p.billingAddress1 ?? ''); 
+              setBillingAddress2(p.billingAddress2 ?? ''); 
+              setBillingCity(p.billingCity ?? ''); 
+              setBillingState(p.billingState ?? ''); 
+              setBillingZip(p.billingZip ?? ''); 
+              setBillingCountry(p.billingCountry ?? ''); }}
+            >Load from backend</button>
+
+
             <button
               style={{ marginTop: 8 }}
-              disabled={!firstName.trim() || !lastName.trim()}
-              onClick={() => { 
+              disabled={!firstName.trim() || !lastName.trim() || !email.trim() || !phone.trim()}
+
+              onClick={async () => { 
                 localStorage.setItem('firstName', firstName.trim()); 
                 localStorage.setItem('lastName', lastName.trim());
                 localStorage.setItem('email', email.trim());
@@ -173,6 +194,10 @@ export default function App() {
                 } else {
                   localStorage.removeItem('billingAddress2');
                 }
+                
+                const { data } = profileId ? await client.models.Profile.update({ id: profileId, firstName: firstName.trim(), lastName: lastName.trim(), email: email.trim(), phone: phone.trim(), organization: organization.trim() || undefined, billingAddress1: billingAddress1.trim() || undefined, billingAddress2: billingAddress2.trim() || undefined, billingCity: billingCity.trim() || undefined, billingState: billingState.trim() || undefined, billingZip: billingZip.trim() || undefined, billingCountry: billingCountry.trim() || undefined }) : await client.models.Profile.create({ firstName: firstName.trim(), lastName: lastName.trim(), email: email.trim(), phone: phone.trim(), organization: organization.trim() || undefined, billingAddress1: billingAddress1.trim() || undefined, billingAddress2: billingAddress2.trim() || undefined, billingCity: billingCity.trim() || undefined, billingState: billingState.trim() || undefined, billingZip: billingZip.trim() || undefined, billingCountry: billingCountry.trim() || undefined }); setProfileId(data.id); localStorage.setItem('profileId', data.id);
+
+
 
               }}
             >
