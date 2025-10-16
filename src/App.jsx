@@ -152,7 +152,7 @@ export default function App() {
               <div style={{ color: 'red', marginTop: 12 }}>TODO: Add Terms of Service & Privacy Policy consent</div>
 
 
-            <button style={{ marginTop: 8 }} onClick={async () => { const { data: profiles } = await client.models.Profile.list(); const p = profiles?.[0]; if (!p) return; 
+            <button style={{ marginTop: 8 }} onClick={async () => { const { data: profiles } = await client.models.Profile.list(); const p = profiles?.at(-1); if (!p) return; 
               setProfileId(p.id); 
               setFirstName(p.firstName ?? ''); 
               setLastName(p.lastName ?? ''); 
