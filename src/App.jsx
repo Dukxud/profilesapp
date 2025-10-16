@@ -11,7 +11,7 @@ export default function App() {
 
   const [firstName, setFirstName] = useState(() => localStorage.getItem('firstName') || '');
   const [lastName, setLastName] = useState(() => localStorage.getItem('lastName') || '');
-  const [email, setEmail] = useState(() => localStorage.getItem('email') || '');
+  const [email, setEmail] = useState('');
   const [phone, setPhone] = useState(() => localStorage.getItem('phone') || '');
   const [organization, setCompany] = useState(() => localStorage.getItem('organization') || '');
   const [billingAddress1, setBillingAddress1] = useState(() => localStorage.getItem('billingAddress1') || '');
