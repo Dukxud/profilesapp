@@ -206,17 +206,18 @@ export default function App() {
             
             <button
               style={{ marginTop: 8 }}
-              onClick={() => {
+              onClick={async () => {
                 alert('clicked');
-                client.models.Profile.list({ authMode: 'userPool' })
-                  .then(({ data }) => {
-                    console.log('Profiles:', data);
-                    alert(`Profiles in backend: ${data.length}`);
-                  })
-                  .catch((e) => {
-                    console.error(e);
-                    alert('Error: ' + (e?.errors?.[0]?.message || e.message || 'unknown'));
-                  });
+                const listFn = client?.models?.Profile?.list;
+                if (!listFn) { alert('Profile.list is undefined — outputs/model not available'); return; }
+                try {
+                  const { data } = await listFn({ authMode: 'userPool' });
+                  console.log('Profiles:', data);
+                  alert(`Profiles in backend: ${data.length}`);
+                } catch (e) {
+                  console.error(e);
+                  alert('Error: ' + (e?.errors?.[0]?.message || e.message || 'unknown'));
+                }
               }}
             >
               Debug: count profiles
