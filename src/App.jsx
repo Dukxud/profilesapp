@@ -107,7 +107,7 @@ export default function App() {
               />
 
               <TextField
-                label="Billing City"
+                label="City"
                 placeholder="e.g., New York City"
                 width="280px"
                 value={billingCity}
@@ -116,7 +116,7 @@ export default function App() {
               />
 
               <TextField
-                label="Billing State"
+                label="State"
                 placeholder="e.g., New York"
                 width="280px"
                 value={billingState}
@@ -125,7 +125,7 @@ export default function App() {
               />
 
               <TextField
-                label="Billing Zip Code"
+                label="Zip Code"
                 placeholder="e.g., 10001"
                 width="280px"
                 value={billingZip}
@@ -134,7 +134,7 @@ export default function App() {
               />
 
               <TextField
-                label="Billing Country"
+                label="Country"
                 placeholder="e.g., United States of America"
                 width="280px"
                 value={billingCountry}
@@ -152,7 +152,7 @@ export default function App() {
                 localStorage.setItem('phone', phone.trim());
                 localStorage.setItem('billingAddress1', billingAddress1.trim());
                 localStorage.setItem('billingCity', billingCity.trim());
-                localStorage.setItem('billingState', billingCity.trim());
+                localStorage.setItem('billingState', billingState.trim());
                 localStorage.setItem('billingZip', billingZip.trim());
                 localStorage.setItem('billingCountry', billingCountry.trim());
                 
