@@ -124,10 +124,10 @@ export default function App() {
 
               <TextField
                 label="Billing Zip Code"
-                placeholder="e.g., New York"
+                placeholder="e.g., 10001"
                 width="280px"
-                value={billingState}
-                onChange={(e) => setBillingState(e.target.value)}
+                value={billingZip}
+                onChange={(e) => setBillingZip(e.target.value)}
                 isRequired
               />
 
