@@ -8,7 +8,8 @@ import { generateClient } from 'aws-amplify/data';
 
 export default function App() {
   const client = generateClient();
-  const { user: authUser } = useAuthenticator();
+  const authUser = undefined; // temp: avoid useAuthenticator outside provider
+
 
   useEffect(() => {
     if (!authUser) return; // wait until signed in
