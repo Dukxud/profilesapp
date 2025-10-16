@@ -1,14 +1,39 @@
 // src/App.jsx
 import { useState, useEffect } from 'react';
 
-import { Authenticator, View, Heading, TextField } from '@aws-amplify/ui-react';
+import { Authenticator, View, Heading, TextField, useAuthenticator } from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
 import { generateClient } from 'aws-amplify/data';
 
 
 export default function App() {
   const client = generateClient();
+  const { user: authUser } = useAuthenticator();
 
+  useEffect(() => {
+    if (!authUser) return; // wait until signed in
+    (async () => {
+      try {
+        const { data } = await client.models.Profile.list({ authMode: 'userPool' });
+        const p = data.at(-1);
+        if (!p) return;
+        setProfileId(p.id);
+        setFirstName(p.firstName ?? '');
+        setLastName(p.lastName ?? '');
+        setPhone(p.phone ?? '');
+        setCompany(p.organization ?? '');
+        setBillingAddress1(p.billingAddress1 ?? '');
+        setBillingAddress2(p.billingAddress2 ?? '');
+        setBillingCity(p.billingCity ?? '');
+        setBillingState(p.billingState ?? '');
+        setBillingZip(p.billingZip ?? '');
+        setBillingCountry(p.billingCountry ?? '');
+      } catch (e) {
+        console.error('auto-load profile failed', e);
+      }
+    })();
+  }, [authUser]);
+  
   const [firstName, setFirstName] = useState(() => localStorage.getItem('firstName') || '');
   const [lastName, setLastName] = useState(() => localStorage.getItem('lastName') || '');
   const [email, setEmail] = useState('');
