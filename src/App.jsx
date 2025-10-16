@@ -78,7 +78,7 @@ export default function App() {
                 label="Email Address"
                 placeholder="e.g., JohnDoe@gmail.com"
                 width="280px"
-                value={user?.attributes?.email ?? email}
+                value={user?.attributes?.email ?? user?.signInDetails?.loginId ?? user?.username ?? email}
                 onChange={(e) => setEmail(e.target.value)}
                 isRequired
                 isReadOnly
