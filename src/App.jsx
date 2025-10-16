@@ -142,6 +142,8 @@ export default function App() {
                 isRequired
               />
 
+              <div style={{ color: 'red', marginTop: 12 }}>TODO: Add Terms of Service & Privacy Policy consent</div>
+
             <button
               style={{ marginTop: 8 }}
               disabled={!firstName.trim() || !lastName.trim()}
