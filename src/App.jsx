@@ -223,6 +223,12 @@ export default function App() {
               Debug: count profiles
             </button>
 
+            <button
+              style={{ marginTop: 8 }}
+              onClick={() => alert('models: ' + (Object.keys(client?.models || {}).join(', ') || 'none'))}
+            >
+              Debug: models
+            </button>
 
 
             <button onClick={signOut}>Sign out</button>
