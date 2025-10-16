@@ -203,7 +203,7 @@ export default function App() {
             >
               Save profile
             </button>
-            <button style={{ marginTop: 8 }} onClick={async () => { const { data } = await client.models.Profile.list(); console.log('Profiles:', data); alert(`Profiles in backend: ${data.length}`); }}>Debug: count profiles</button>
+            <button style={{ marginTop: 8 }}onClick={() => client.models.Profile.list().then(({data}) => { console.log('Profiles:', data); alert(`Profiles in backend: ${data.length}`); }).catch(e => { console.error(e); alert('Error: ' + (e?.errors?.[0]?.message || e.message || 'unknown')); })}>Debug: count profiles</button>
             <button onClick={signOut}>Sign out</button>
           </main>
         )}
