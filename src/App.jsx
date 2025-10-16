@@ -32,7 +32,7 @@ export default function App() {
       >
         {({ user, signOut }) => (
           <main className="app-authed">
-            <h1>Welcome {user?.username}</h1>
+            <h1>Welcome {firstName}</h1>
             
             <TextField
               label="First name"
@@ -85,6 +85,7 @@ export default function App() {
                 localStorage.setItem('firstName', firstName.trim()); 
                 localStorage.setItem('lastName', lastName.trim());
                 localStorage.setItem('email', email.trim());
+                localStorage.setItem('phone', phone.trim());
                 
                 if (organization.trim()) {
                   localStorage.setItem('organization', organization.trim());
