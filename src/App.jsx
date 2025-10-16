@@ -38,8 +38,7 @@ export default function App() {
               onChange={(e) => setFirstName(e.target.value)}
               isRequired
             />
-            <button style={{ marginTop: 8 }} disabled={!firstName.trim()} onClick={() => localStorage.setItem('firstName', firstName.trim())}>Save first name</button>
-
+          
             <TextField
               label="Last name"
               placeholder="e.g., Lovelace"
@@ -49,6 +48,16 @@ export default function App() {
               isRequired
             />
             
+            <button
+              style={{ marginTop: 8 }}
+              disabled={!firstName.trim() || !lastName.trim()}
+              onClick={() => { 
+                localStorage.setItem('firstName', firstName.trim()); 
+                localStorage.setItem('lastName', lastName.trim()); 
+              }}
+            >
+              Save profile
+            </button>
 
 
             <div style={{ marginTop: 8 }}>Profile setup coming soon…</div>
