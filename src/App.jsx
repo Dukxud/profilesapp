@@ -40,7 +40,7 @@ export default function App() {
           <main className="app-authed">
             <h1>Welcome {firstName}</h1>
             
-            <h2 style={{ marginTop: 24, marginBottom: 8 }}>Personal information</h2>
+            <h2 style={{ marginTop: 24, marginBottom: 8 }}>Personal Information</h2>
 
               <TextField
                 label="First name"
@@ -86,7 +86,7 @@ export default function App() {
                 isRequired
               />
 
-            <h2 style={{ marginTop: 24, marginBottom: 8 }}>Billing information</h2>
+            <h2 style={{ marginTop: 24, marginBottom: 8 }}>Billing Information</h2>
 
 
               <TextField
