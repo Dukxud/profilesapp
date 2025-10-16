@@ -14,6 +14,8 @@ export default function App() {
   const [billingCity, setBillingCity] = useState(() => localStorage.getItem('billingCity') || '');
   const [billingState, setBillingState] = useState(() => localStorage.getItem('billingState') || '');
   const [billingZip, setBillingZip] = useState(() => localStorage.getItem('billingZip') || '');
+  const [billingCountry, setBillingCountry] = useState(() => localStorage.getItem('billingCountry') || '');
+
 
   return (
     <div className="auth-shell">
@@ -131,6 +133,15 @@ export default function App() {
                 isRequired
               />
 
+              <TextField
+                label="Billing Country"
+                placeholder="e.g., United States of America"
+                width="280px"
+                value={billingCountry}
+                onChange={(e) => setBillingCountry(e.target.value)}
+                isRequired
+              />
+
             <button
               style={{ marginTop: 8 }}
               disabled={!firstName.trim() || !lastName.trim()}
@@ -143,6 +154,7 @@ export default function App() {
                 localStorage.setItem('billingCity', billingCity.trim());
                 localStorage.setItem('billingState', billingCity.trim());
                 localStorage.setItem('billingZip', billingZip.trim());
+                localStorage.setItem('billingCountry', billingCountry.trim());
                 
                 if (organization.trim()) {
                   localStorage.setItem('organization', organization.trim());
