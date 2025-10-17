@@ -21,6 +21,7 @@ export default function App() {
   const [billingZip, setBillingZip] = useState(() => localStorage.getItem('billingZip') || '');
   const [billingCountry, setBillingCountry] = useState(() => localStorage.getItem('billingCountry') || '');
   const [profileId, setProfileId] = useState(() => localStorage.getItem('profileId') || '');
+  const [savedToast, setSavedToast] = useState(false);
 
 
   async function loadLatest() {
@@ -205,6 +206,27 @@ export default function App() {
 
             <div style={{ color: 'red', marginTop: 12 }}>TODO: Add Terms of Service & Privacy Policy consent</div>
 
+            {savedToast && (
+              <div
+                role="status"
+                aria-live="polite"
+                style={{
+                  position: 'fixed',
+                  right: 16,
+                  bottom: 16,
+                  background: '#10b981',       // green
+                  color: 'white',
+                  padding: '10px 14px',
+                  borderRadius: 12,
+                  boxShadow: '0 6px 20px rgba(0,0,0,.2)',
+                  fontWeight: 600
+                }}
+              >
+                Saved ✓
+              </div>
+            )}
+
+
             <button
               style={{ marginTop: 8 }}
               disabled={!firstName.trim() || !lastName.trim() || !phone.trim()}
@@ -264,6 +286,8 @@ export default function App() {
                 setProfileId(data.id);
                 localStorage.setItem('profileId', data.id);
                 await loadLatest();
+                setSavedToast(true);
+                setTimeout(() => setSavedToast(false), 1600);
 
               }}
             >
