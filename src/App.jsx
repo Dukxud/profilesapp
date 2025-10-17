@@ -1,6 +1,6 @@
 // src/App.jsx
 import { useState, useEffect, useMemo } from 'react';
-import { Authenticator, View, Heading, TextField, useAuthenticator } from '@aws-amplify/ui-react';
+import { Authenticator, View, Heading, TextField} from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
 import { generateClient } from 'aws-amplify/data';
 
@@ -14,7 +14,6 @@ const Req = ({ text }) => (
 
 export default function App() {
   const client = generateClient();
-  const authUser = undefined; // temp: avoid useAuthenticator outside provider
 
   const [firstName, setFirstName] = useState(() => localStorage.getItem('firstName') || '');
   const [lastName, setLastName] = useState(() => localStorage.getItem('lastName') || '');
@@ -32,10 +31,16 @@ export default function App() {
 
 
   async function loadLatest() {
-    const { data } = await client.models.Profile.list({ authMode: 'userPool' });
-    const p = data.at(-1);
+    if (!profileId) {
+      // No known profile for this browser/user yet → nothing to load
+      return;
+    }
+    const { data: p } = await client.models.Profile.get(
+      { id: profileId },
+      { authMode: 'userPool' }
+    );
     if (!p) return;
-
+  
     setProfileId(p.id);
     setFirstName(p.firstName ?? '');
     setLastName(p.lastName ?? '');
@@ -48,6 +53,7 @@ export default function App() {
     setBillingZip(p.billingZip ?? '');
     setBillingCountry(p.billingCountry ?? '');
   }
+  
 
   const AutoLoad = useMemo(
     () =>
@@ -67,27 +73,14 @@ export default function App() {
           }
           localStorage.setItem('profileOwner', String(currentOwner || ''));
 
-
           (async () => {
             try {
-              const { data } = await client.models.Profile.list({ authMode: 'userPool' });
-              const p = data.at(-1);
-              if (!p || cancelled) return;
-              setProfileId(p.id);
-              setFirstName(p.firstName ?? '');
-              setLastName(p.lastName ?? '');
-              setPhone(p.phone ?? '');
-              setCompany(p.organization ?? '');
-              setBillingAddress1(p.billingAddress1 ?? '');
-              setBillingAddress2(p.billingAddress2 ?? '');
-              setBillingCity(p.billingCity ?? '');
-              setBillingState(p.billingState ?? '');
-              setBillingZip(p.billingZip ?? '');
-              setBillingCountry(p.billingCountry ?? '');
+              if (!cancelled) await loadLatest();
             } catch (e) {
               console.error('auto-load profile failed', e);
             }
           })();
+          
           return () => {
             cancelled = true;
           };
@@ -325,7 +318,11 @@ export default function App() {
                     : await client.models.Profile.create(payload, { authMode: 'userPool' });
 
                   setProfileId(data.id);
-                  localStorage.setItem('profileId', data.id);
+
+                  localStorage.setItem(
+                    'profileOwner',
+                    String(user?.userId ?? user?.attributes?.sub ?? user?.username ?? '')
+                  );
                   await loadLatest();
                   setSavedToast(true);
                   setTimeout(() => setSavedToast(false), 3000);
