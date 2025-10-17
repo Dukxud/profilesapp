@@ -9,6 +9,38 @@ export default function App() {
   const client = generateClient();
   const authUser = undefined; // temp: avoid useAuthenticator outside provider
 
+  const [firstName, setFirstName] = useState(() => localStorage.getItem('firstName') || '');
+  const [lastName, setLastName] = useState(() => localStorage.getItem('lastName') || '');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState(() => localStorage.getItem('phone') || '');
+  const [organization, setCompany] = useState(() => localStorage.getItem('organization') || '');
+  const [billingAddress1, setBillingAddress1] = useState(() => localStorage.getItem('billingAddress1') || '');
+  const [billingAddress2, setBillingAddress2] = useState(() => localStorage.getItem('billingAddress2') || '');
+  const [billingCity, setBillingCity] = useState(() => localStorage.getItem('billingCity') || '');
+  const [billingState, setBillingState] = useState(() => localStorage.getItem('billingState') || '');
+  const [billingZip, setBillingZip] = useState(() => localStorage.getItem('billingZip') || '');
+  const [billingCountry, setBillingCountry] = useState(() => localStorage.getItem('billingCountry') || '');
+  const [profileId, setProfileId] = useState(() => localStorage.getItem('profileId') || '');
+
+
+  async function loadLatest() {
+    const { data } = await client.models.Profile.list({ authMode: 'userPool' });
+    const p = data.at(-1);
+    if (!p) return;
+  
+    setProfileId(p.id);
+    setFirstName(p.firstName ?? '');
+    setLastName(p.lastName ?? '');
+    setPhone(p.phone ?? '');
+    setCompany(p.organization ?? '');
+    setBillingAddress1(p.billingAddress1 ?? '');
+    setBillingAddress2(p.billingAddress2 ?? '');
+    setBillingCity(p.billingCity ?? '');
+    setBillingState(p.billingState ?? '');
+    setBillingZip(p.billingZip ?? '');
+    setBillingCountry(p.billingCountry ?? '');
+  }
+
   const AutoLoad = useMemo(
     () =>
       function AutoLoad({ user }) {
@@ -43,22 +75,6 @@ export default function App() {
       },
     []
   );
-  
-
-
-  const [firstName, setFirstName] = useState(() => localStorage.getItem('firstName') || '');
-  const [lastName, setLastName] = useState(() => localStorage.getItem('lastName') || '');
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState(() => localStorage.getItem('phone') || '');
-  const [organization, setCompany] = useState(() => localStorage.getItem('organization') || '');
-  const [billingAddress1, setBillingAddress1] = useState(() => localStorage.getItem('billingAddress1') || '');
-  const [billingAddress2, setBillingAddress2] = useState(() => localStorage.getItem('billingAddress2') || '');
-  const [billingCity, setBillingCity] = useState(() => localStorage.getItem('billingCity') || '');
-  const [billingState, setBillingState] = useState(() => localStorage.getItem('billingState') || '');
-  const [billingZip, setBillingZip] = useState(() => localStorage.getItem('billingZip') || '');
-  const [billingCountry, setBillingCountry] = useState(() => localStorage.getItem('billingCountry') || '');
-  const [profileId, setProfileId] = useState(() => localStorage.getItem('profileId') || '');
-
 
   return (
     <div className="auth-shell">
@@ -190,22 +206,7 @@ export default function App() {
             <div style={{ color: 'red', marginTop: 12 }}>TODO: Add Terms of Service & Privacy Policy consent</div>
 
 
-            <button style={{ marginTop: 8 }} onClick={async () => {
-              const { data: profiles } = await client.models.Profile.list(); const p = profiles?.at(-1); if (!p) return;
-              setProfileId(p.id);
-              setFirstName(p.firstName ?? '');
-              setLastName(p.lastName ?? '');
-              setEmail(p.email ?? '');
-              setPhone(p.phone ?? '');
-              setCompany(p.organization ?? '');
-              setBillingAddress1(p.billingAddress1 ?? '');
-              setBillingAddress2(p.billingAddress2 ?? '');
-              setBillingCity(p.billingCity ?? '');
-              setBillingState(p.billingState ?? '');
-              setBillingZip(p.billingZip ?? '');
-              setBillingCountry(p.billingCountry ?? '');
-            }}
-            >Load from backend</button>
+
 
 
             <button
@@ -266,14 +267,31 @@ export default function App() {
 
                 setProfileId(data.id);
                 localStorage.setItem('profileId', data.id);
-
+                await loadLatest();
 
               }}
             >
               Save profile
             </button>
 
-            <button
+            {/* <button style={{ marginTop: 8 }} onClick={async () => {
+              const { data: profiles } = await client.models.Profile.list(); const p = profiles?.at(-1); if (!p) return;
+              setProfileId(p.id);
+              setFirstName(p.firstName ?? '');
+              setLastName(p.lastName ?? '');
+              setEmail(p.email ?? '');
+              setPhone(p.phone ?? '');
+              setCompany(p.organization ?? '');
+              setBillingAddress1(p.billingAddress1 ?? '');
+              setBillingAddress2(p.billingAddress2 ?? '');
+              setBillingCity(p.billingCity ?? '');
+              setBillingState(p.billingState ?? '');
+              setBillingZip(p.billingZip ?? '');
+              setBillingCountry(p.billingCountry ?? '');
+            }}
+            >Load from backend</button> */}
+
+            {/* <button
               style={{ marginTop: 8 }}
               onClick={async () => {
                 alert('clicked');
@@ -290,16 +308,16 @@ export default function App() {
               }}
             >
               Debug: count profiles
-            </button>
+            </button> */}
 
-            <button
+            {/* <button
               style={{ marginTop: 8 }}
               onClick={() => alert('models: ' + (Object.keys(client?.models || {}).join(', ') || 'none'))}
             >
               Debug: models
-            </button>
+            </button> */}
 
-            <button
+            {/* <button
               style={{ marginTop: 8 }}
               onClick={async () => {
                 const { data } = await client.models.Profile.list({ authMode: 'userPool' });
@@ -308,7 +326,7 @@ export default function App() {
               }}
             >
               Debug: view backend profile
-            </button>
+            </button> */}
 
 
             <button onClick={signOut}>Sign out</button>
