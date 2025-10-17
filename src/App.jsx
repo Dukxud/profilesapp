@@ -35,7 +35,7 @@ export default function App() {
     const { data } = await client.models.Profile.list({ authMode: 'userPool' });
     const p = data.at(-1);
     if (!p) return;
-  
+
     setProfileId(p.id);
     setFirstName(p.firstName ?? '');
     setLastName(p.lastName ?? '');
@@ -103,8 +103,17 @@ export default function App() {
           },
         }}
       >
-        {({ user, signOut }) => (
-          <main className="app-authed">
+        {({ user, signOut }) => {
+          const canSave = Boolean(
+            firstName.trim() &&
+            lastName.trim() &&
+            phone.trim() &&
+            (user?.attributes?.email ?? user?.signInDetails?.loginId ?? user?.username)
+          );
+
+          return (
+            <main className="app-authed">
+              
             <AutoLoad user={user} />
             <h1>Welcome {firstName}</h1>
 
@@ -214,108 +223,105 @@ export default function App() {
             <div style={{ color: 'red', marginTop: 12 }}>TODO: Add Terms of Service & Privacy Policy consent</div>
 
             {savedToast && (
-              <div
-                role="status"
-                aria-live="polite"
+                <div
+                  role="status"
+                  aria-live="polite"
+                  style={{
+                    position: 'fixed',
+                    right: 16,
+                    bottom: 16,
+                    background: '#10b981',       // green
+                    color: 'white',
+                    padding: '10px 14px',
+                    borderRadius: 12,
+                    boxShadow: '0 6px 20px rgba(0,0,0,.2)',
+                    fontWeight: 600
+                  }}
+                >
+                  Saved ✓
+                </div>
+              )}
+
+
+              <button
                 style={{
-                  position: 'fixed',
-                  right: 16,
-                  bottom: 16,
-                  background: '#10b981',       // green
-                  color: 'white',
-                  padding: '10px 14px',
-                  borderRadius: 12,
-                  boxShadow: '0 6px 20px rgba(0,0,0,.2)',
-                  fontWeight: 600
+                  marginTop: 8,
+                  padding: '10px 16px',
+                  borderRadius: 10,
+                  border: '1px solid #222',
+                  background: canSave ? '#111' : '#e5e7eb',
+                  color: canSave ? 'white' : '#6b7280',
+                  cursor: canSave ? 'pointer' : 'not-allowed'
+                }}
+                disabled={!canSave}
+
+                onClick={async () => {
+                  localStorage.setItem('firstName', firstName.trim());
+                  localStorage.setItem('lastName', lastName.trim());
+                  localStorage.setItem('phone', phone.trim());
+                  localStorage.setItem('billingAddress1', billingAddress1.trim());
+                  localStorage.setItem('billingCity', billingCity.trim());
+                  localStorage.setItem('billingState', billingState.trim());
+                  localStorage.setItem('billingZip', billingZip.trim());
+                  localStorage.setItem('billingCountry', billingCountry.trim());
+
+                  localStorage.setItem('email', (
+                    user?.attributes?.email ?? user?.signInDetails?.loginId ?? user?.username ?? ''
+                  ).toString().trim());
+
+                  if (organization.trim()) {
+                    localStorage.setItem('organization', organization.trim());
+                  } else {
+                    localStorage.removeItem('organization');
+                  }
+
+                  if (billingAddress2.trim()) {
+                    localStorage.setItem('billingAddress2', billingAddress2.trim());
+                  } else {
+                    localStorage.removeItem('billingAddress2');
+                  }
+
+                  // replace your current upsert line with this block
+                  const cognitoEmail = (
+                    user?.attributes?.email ??
+                    user?.signInDetails?.loginId ??
+                    user?.username ??
+                    email
+                  ).toString().trim();
+
+                  // empty → null (clears in DB)
+                  const nn = (s) => (s.trim() === '' ? null : s.trim());
+
+                  const payload = {
+                    firstName: firstName.trim(),
+                    lastName: lastName.trim(),
+                    email: cognitoEmail,
+                    phone: phone.trim(),
+                    organization: nn(organization),
+                    billingAddress1: nn(billingAddress1),
+                    billingAddress2: nn(billingAddress2),
+                    billingCity: nn(billingCity),
+                    billingState: nn(billingState),
+                    billingZip: nn(billingZip),
+                    billingCountry: nn(billingCountry),
+                  };
+
+                  const { data } = profileId
+                    ? await client.models.Profile.update({ id: profileId, ...payload }, { authMode: 'userPool' })
+                    : await client.models.Profile.create(payload, { authMode: 'userPool' });
+
+                  setProfileId(data.id);
+                  localStorage.setItem('profileId', data.id);
+                  await loadLatest();
+                  setSavedToast(true);
+                  setTimeout(() => setSavedToast(false), 3000);
+
                 }}
               >
-                Saved ✓
-              </div>
-            )}
+                Save profile
+              </button>
 
-            const canSave = Boolean(
-              firstName.trim() &&
-              lastName.trim() &&
-              phone.trim() &&
-              (user?.attributes?.email ?? user?.signInDetails?.loginId ?? user?.username)
-            );
-
-            <button
-              style={{
-                marginTop: 8,
-                padding: '10px 16px',
-                borderRadius: 10,
-                border: '1px solid #222',
-                background: canSave ? '#111' : '#e5e7eb',
-                color: canSave ? 'white' : '#6b7280',
-                cursor: canSave ? 'pointer' : 'not-allowed'
-              }}
-              disabled={!canSave}
-
-              onClick={async () => {
-                localStorage.setItem('firstName', firstName.trim());
-                localStorage.setItem('lastName', lastName.trim());
-                localStorage.setItem('email', email.trim());
-                localStorage.setItem('phone', phone.trim());
-                localStorage.setItem('billingAddress1', billingAddress1.trim());
-                localStorage.setItem('billingCity', billingCity.trim());
-                localStorage.setItem('billingState', billingState.trim());
-                localStorage.setItem('billingZip', billingZip.trim());
-                localStorage.setItem('billingCountry', billingCountry.trim());
-
-                if (organization.trim()) {
-                  localStorage.setItem('organization', organization.trim());
-                } else {
-                  localStorage.removeItem('organization');
-                }
-
-                if (billingAddress2.trim()) {
-                  localStorage.setItem('billingAddress2', billingAddress2.trim());
-                } else {
-                  localStorage.removeItem('billingAddress2');
-                }
-
-                // replace your current upsert line with this block
-                const cognitoEmail = (
-                  user?.attributes?.email ??
-                  user?.signInDetails?.loginId ??
-                  user?.username ??
-                  email
-                ).toString().trim();
-
-                // empty → null (clears in DB)
-                const nn = (s) => (s.trim() === '' ? null : s.trim());
-
-                const payload = {
-                  firstName: firstName.trim(),
-                  lastName: lastName.trim(),
-                  email: cognitoEmail,
-                  phone: phone.trim(),
-                  organization: nn(organization),
-                  billingAddress1: nn(billingAddress1),
-                  billingAddress2: nn(billingAddress2),
-                  billingCity: nn(billingCity),
-                  billingState: nn(billingState),
-                  billingZip: nn(billingZip),
-                  billingCountry: nn(billingCountry),
-                };
-
-                const { data } = profileId
-                  ? await client.models.Profile.update({ id: profileId, ...payload }, { authMode: 'userPool' })
-                  : await client.models.Profile.create(payload, { authMode: 'userPool' });
-
-                setProfileId(data.id);
-                localStorage.setItem('profileId', data.id);
-                await loadLatest();
-                setSavedToast(true);
-                setTimeout(() => setSavedToast(false), 3000);
-
-              }}
-            >
-              Save profile
-            </button>
-
-            {/* <button style={{ marginTop: 8 }} onClick={async () => {
+              {/* <button style={{ marginTop: 8 }} onClick={async () => {
               const { data: profiles } = await client.models.Profile.list(); const p = profiles?.at(-1); if (!p) return;
               setProfileId(p.id);
               setFirstName(p.firstName ?? '');
@@ -332,7 +338,7 @@ export default function App() {
             }}
             >Load from backend</button> */}
 
-            {/* <button
+              {/* <button
               style={{ marginTop: 8 }}
               onClick={async () => {
                 alert('clicked');
@@ -351,14 +357,14 @@ export default function App() {
               Debug: count profiles
             </button> */}
 
-            {/* <button
+              {/* <button
               style={{ marginTop: 8 }}
               onClick={() => alert('models: ' + (Object.keys(client?.models || {}).join(', ') || 'none'))}
             >
               Debug: models
             </button> */}
 
-            {/* <button
+              {/* <button
               style={{ marginTop: 8 }}
               onClick={async () => {
                 const { data } = await client.models.Profile.list({ authMode: 'userPool' });
@@ -369,9 +375,23 @@ export default function App() {
               Debug: view backend profile
             </button> */}
 
-            <button onClick={signOut}>Sign out</button>
-          </main>
-        )}
+              <button
+                onClick={signOut}
+                style={{
+                  marginTop: 8, marginLeft: 8,
+                  padding: '10px 16px',
+                  borderRadius: 10,
+                  border: '1px solid #222',
+                  background: '#111',
+                  color: 'white',
+                  cursor: 'pointer'
+                }}>
+                Sign out
+              </button>
+
+            </main>
+          );
+        }}
       </Authenticator>
     </div>
   );
