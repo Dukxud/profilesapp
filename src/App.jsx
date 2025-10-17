@@ -122,6 +122,7 @@ export default function App() {
               
             <AutoLoad user={user} />
             <h1>Welcome {firstName}</h1>
+            <div style={{ fontSize: 12, color: '#6b7280' }}>userId: {user?.attributes?.sub ?? user?.userId ?? user?.username}</div>
 
             <h2 style={{ marginTop: 24, marginBottom: 8 }}>Personal Information</h2>
 
@@ -375,16 +376,16 @@ export default function App() {
               Debug: models
             </button> */}
 
-              {/* <button
-              style={{ marginTop: 8 }}
-              onClick={async () => {
-                const { data } = await client.models.Profile.list({ authMode: 'userPool' });
-                const p = data.at(-1);
-                alert(p ? JSON.stringify(p, null, 2) : 'No profile found');
-              }}
-            >
-              Debug: view backend profile
-            </button> */}
+              <button
+                style={{ marginTop: 8 }}
+                onClick={async () => {
+                  const { data } = await client.models.Profile.list({ authMode: 'userPool' });
+                  const p = data.at(-1);
+                  alert(p ? JSON.stringify(p, null, 2) : 'No profile found');
+                }}
+              >
+                Debug: view backend profile
+              </button>
 
               <button
                 onClick={signOut}
