@@ -205,10 +205,6 @@ export default function App() {
 
             <div style={{ color: 'red', marginTop: 12 }}>TODO: Add Terms of Service & Privacy Policy consent</div>
 
-
-
-
-
             <button
               style={{ marginTop: 8 }}
               disabled={!firstName.trim() || !lastName.trim() || !phone.trim()}
@@ -327,7 +323,6 @@ export default function App() {
             >
               Debug: view backend profile
             </button> */}
-
 
             <button onClick={signOut}>Sign out</button>
           </main>
