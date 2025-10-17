@@ -62,16 +62,22 @@ export default function App() {
           if (!user) return;
           let cancelled = false;
 
-          const currentOwner = user?.userId ?? user?.attributes?.sub ?? user?.username;
-          const storedOwner  = localStorage.getItem('profileOwner');
-          if (storedOwner && storedOwner !== String(currentOwner)) {
-            // different person signed in → clear local carryover
-            ['profileId','firstName','lastName','email','phone','organization',
-            'billingAddress1','billingAddress2','billingCity','billingState',
-            'billingZip','billingCountry'].forEach((k) => localStorage.removeItem(k));
+          const currentOwner = String(user?.attributes?.sub || '');
+          const storedOwner  = String(localStorage.getItem('profileOwner') || '');
+          
+          // If different OR missing, clear any carried-over profile/data
+          if (storedOwner !== currentOwner) {
+            [
+              'profileId','firstName','lastName','email','phone','organization',
+              'billingAddress1','billingAddress2','billingCity','billingState',
+              'billingZip','billingCountry'
+            ].forEach((k) => localStorage.removeItem(k));
             setProfileId('');
           }
-          localStorage.setItem('profileOwner', String(currentOwner || ''));
+          
+          // Always write the current owner after the check
+          localStorage.setItem('profileOwner', currentOwner);
+          
 
           (async () => {
             try {
@@ -388,7 +394,14 @@ export default function App() {
               </button>
 
               <button
-                onClick={signOut}
+                onClick={() => {
+                  // [
+                  //   'profileOwner','profileId','firstName','lastName','email','phone','organization',
+                  //   'billingAddress1','billingAddress2','billingCity','billingState','billingZip','billingCountry'
+                  // ].forEach((k) => localStorage.removeItem(k)); // clear our app’s cache first
+                  signOut(); // then end the Cognito session
+                }}
+
                 style={{
                   marginTop: 8, marginLeft: 8,
                   padding: '10px 16px',
