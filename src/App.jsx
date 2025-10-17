@@ -4,6 +4,13 @@ import { Authenticator, View, Heading, TextField, useAuthenticator } from '@aws-
 import '@aws-amplify/ui-react/styles.css';
 import { generateClient } from 'aws-amplify/data';
 
+const Req = ({ text }) => (
+  <span>
+    {text}
+    <span style={{ color: '#dc2626' }}> *</span>
+  </span>
+);
+
 
 export default function App() {
   const client = generateClient();
@@ -104,7 +111,7 @@ export default function App() {
             <h2 style={{ marginTop: 24, marginBottom: 8 }}>Personal Information</h2>
 
             <TextField
-              label="First name"
+              label={<Req text="First name" />}
               placeholder="e.g., Ada"
               width="280px"
               value={firstName}
@@ -233,7 +240,7 @@ export default function App() {
                 opacity: (!firstName.trim() || !lastName.trim() || !email.trim() || !phone.trim()) ? 0.4 : 1,
                 cursor: (!firstName.trim() || !lastName.trim() || !email.trim() || !phone.trim()) ? 'not-allowed' : 'pointer'
               }}
-              
+
               disabled={!firstName.trim() || !lastName.trim() || !phone.trim()}
 
               onClick={async () => {
