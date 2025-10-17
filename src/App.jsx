@@ -10,31 +10,34 @@ export default function App() {
   const client = generateClient();
   const authUser = undefined; // temp: avoid useAuthenticator outside provider
 
+  function AutoLoad({ user }) {
+    useEffect(() => {
+      if (!user) return;
+      (async () => {
+        try {
+          const { data } = await client.models.Profile.list({ authMode: 'userPool' });
+          const p = data.at(-1);
+          if (!p) return;
+          setProfileId(p.id);
+          setFirstName(p.firstName ?? '');
+          setLastName(p.lastName ?? '');
+          setPhone(p.phone ?? '');
+          setCompany(p.organization ?? '');
+          setBillingAddress1(p.billingAddress1 ?? '');
+          setBillingAddress2(p.billingAddress2 ?? '');
+          setBillingCity(p.billingCity ?? '');
+          setBillingState(p.billingState ?? '');
+          setBillingZip(p.billingZip ?? '');
+          setBillingCountry(p.billingCountry ?? '');
+        } catch (e) {
+          console.error('auto-load profile failed', e);
+        }
+      })();
+    }, [user?.userId]);
+    return null;
+  }
 
-  useEffect(() => {
-    if (!authUser) return; // wait until signed in
-    (async () => {
-      try {
-        const { data } = await client.models.Profile.list({ authMode: 'userPool' });
-        const p = data.at(-1);
-        if (!p) return;
-        setProfileId(p.id);
-        setFirstName(p.firstName ?? '');
-        setLastName(p.lastName ?? '');
-        setPhone(p.phone ?? '');
-        setCompany(p.organization ?? '');
-        setBillingAddress1(p.billingAddress1 ?? '');
-        setBillingAddress2(p.billingAddress2 ?? '');
-        setBillingCity(p.billingCity ?? '');
-        setBillingState(p.billingState ?? '');
-        setBillingZip(p.billingZip ?? '');
-        setBillingCountry(p.billingCountry ?? '');
-      } catch (e) {
-        console.error('auto-load profile failed', e);
-      }
-    })();
-  }, [authUser]);
-  
+
   const [firstName, setFirstName] = useState(() => localStorage.getItem('firstName') || '');
   const [lastName, setLastName] = useState(() => localStorage.getItem('lastName') || '');
   const [email, setEmail] = useState('');
@@ -70,127 +73,130 @@ export default function App() {
       >
         {({ user, signOut }) => (
           <main className="app-authed">
+            <AutoLoad user={user} />
             <h1>Welcome {firstName}</h1>
-            
+
             <h2 style={{ marginTop: 24, marginBottom: 8 }}>Personal Information</h2>
 
-              <TextField
-                label="First name"
-                placeholder="e.g., Ada"
-                width="280px"
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-                isRequired
-              />
-            
-              <TextField
-                label="Last name"
-                placeholder="e.g., Lovelace"
-                width="280px"
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-                isRequired
-              />
-              
-              <TextField
-                label="Organization (optional)"
-                placeholder="e.g., Acme Corp"
-                width="280px"
-                value={organization}
-                onChange={(e) => setCompany(e.target.value)}
-              />
+            <TextField
+              label="First name"
+              placeholder="e.g., Ada"
+              width="280px"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              isRequired
+            />
 
-              <TextField
-                label="Email Address"
-                placeholder="e.g., JohnDoe@gmail.com"
-                width="280px"
-                value={user?.attributes?.email ?? user?.signInDetails?.loginId ?? user?.username ?? email}
-                onChange={(e) => setEmail(e.target.value)}
-                isRequired
-                isReadOnly
-              />
-              
-              <TextField
-                label="Phone"
-                placeholder="e.g., 123-456-7890"
-                width="280px"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                isRequired
-              />
+            <TextField
+              label="Last name"
+              placeholder="e.g., Lovelace"
+              width="280px"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              isRequired
+            />
+
+            <TextField
+              label="Organization (optional)"
+              placeholder="e.g., Acme Corp"
+              width="280px"
+              value={organization}
+              onChange={(e) => setCompany(e.target.value)}
+            />
+
+            <TextField
+              label="Email Address"
+              placeholder="e.g., JohnDoe@gmail.com"
+              width="280px"
+              value={user?.attributes?.email ?? user?.signInDetails?.loginId ?? user?.username ?? email}
+              onChange={(e) => setEmail(e.target.value)}
+              isRequired
+              isReadOnly
+            />
+
+            <TextField
+              label="Phone"
+              placeholder="e.g., 123-456-7890"
+              width="280px"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              isRequired
+            />
 
             <h2 style={{ marginTop: 24, marginBottom: 8 }}>Billing Information</h2>
 
 
-              <TextField
-                label="Address line 1"
-                placeholder="e.g., 123 Main St"
-                width="280px"
-                value={billingAddress1}
-                onChange={(e) => setBillingAddress1(e.target.value)}
-                isRequired
-              />
+            <TextField
+              label="Address line 1"
+              placeholder="e.g., 123 Main St"
+              width="280px"
+              value={billingAddress1}
+              onChange={(e) => setBillingAddress1(e.target.value)}
+              isRequired
+            />
 
-              <TextField
-                label="Address line 2"
-                placeholder="e.g., Unit 1103"
-                width="280px"
-                value={billingAddress2}
-                onChange={(e) => setBillingAddress2(e.target.value)}
-              />
+            <TextField
+              label="Address line 2"
+              placeholder="e.g., Unit 1103"
+              width="280px"
+              value={billingAddress2}
+              onChange={(e) => setBillingAddress2(e.target.value)}
+            />
 
-              <TextField
-                label="City"
-                placeholder="e.g., New York City"
-                width="280px"
-                value={billingCity}
-                onChange={(e) => setBillingCity(e.target.value)}
-                isRequired
-              />
+            <TextField
+              label="City"
+              placeholder="e.g., New York City"
+              width="280px"
+              value={billingCity}
+              onChange={(e) => setBillingCity(e.target.value)}
+              isRequired
+            />
 
-              <TextField
-                label="State"
-                placeholder="e.g., New York"
-                width="280px"
-                value={billingState}
-                onChange={(e) => setBillingState(e.target.value)}
-                isRequired
-              />
+            <TextField
+              label="State"
+              placeholder="e.g., New York"
+              width="280px"
+              value={billingState}
+              onChange={(e) => setBillingState(e.target.value)}
+              isRequired
+            />
 
-              <TextField
-                label="Zip Code"
-                placeholder="e.g., 10001"
-                width="280px"
-                value={billingZip}
-                onChange={(e) => setBillingZip(e.target.value)}
-                isRequired
-              />
+            <TextField
+              label="Zip Code"
+              placeholder="e.g., 10001"
+              width="280px"
+              value={billingZip}
+              onChange={(e) => setBillingZip(e.target.value)}
+              isRequired
+            />
 
-              <TextField
-                label="Country"
-                placeholder="e.g., United States of America"
-                width="280px"
-                value={billingCountry}
-                onChange={(e) => setBillingCountry(e.target.value)}
-                isRequired
-              />
+            <TextField
+              label="Country"
+              placeholder="e.g., United States of America"
+              width="280px"
+              value={billingCountry}
+              onChange={(e) => setBillingCountry(e.target.value)}
+              isRequired
+            />
 
-              <div style={{ color: 'red', marginTop: 12 }}>TODO: Add Terms of Service & Privacy Policy consent</div>
+            <div style={{ color: 'red', marginTop: 12 }}>TODO: Add Terms of Service & Privacy Policy consent</div>
 
 
-            <button style={{ marginTop: 8 }} onClick={async () => { const { data: profiles } = await client.models.Profile.list(); const p = profiles?.at(-1); if (!p) return; 
-              setProfileId(p.id); 
-              setFirstName(p.firstName ?? ''); 
-              setLastName(p.lastName ?? ''); 
-              setEmail(p.email ?? ''); 
-              setPhone(p.phone ?? ''); 
-              setCompany(p.organization ?? ''); 
-              setBillingAddress1(p.billingAddress1 ?? ''); 
-              setBillingAddress2(p.billingAddress2 ?? ''); 
-              setBillingCity(p.billingCity ?? ''); 
-              setBillingState(p.billingState ?? ''); 
-              setBillingZip(p.billingZip ?? ''); 
-              setBillingCountry(p.billingCountry ?? ''); }}
+            <button style={{ marginTop: 8 }} onClick={async () => {
+              const { data: profiles } = await client.models.Profile.list(); const p = profiles?.at(-1); if (!p) return;
+              setProfileId(p.id);
+              setFirstName(p.firstName ?? '');
+              setLastName(p.lastName ?? '');
+              setEmail(p.email ?? '');
+              setPhone(p.phone ?? '');
+              setCompany(p.organization ?? '');
+              setBillingAddress1(p.billingAddress1 ?? '');
+              setBillingAddress2(p.billingAddress2 ?? '');
+              setBillingCity(p.billingCity ?? '');
+              setBillingState(p.billingState ?? '');
+              setBillingZip(p.billingZip ?? '');
+              setBillingCountry(p.billingCountry ?? '');
+            }}
             >Load from backend</button>
 
 
@@ -198,8 +204,8 @@ export default function App() {
               style={{ marginTop: 8 }}
               disabled={!firstName.trim() || !lastName.trim() || !phone.trim()}
 
-              onClick={async () => { 
-                localStorage.setItem('firstName', firstName.trim()); 
+              onClick={async () => {
+                localStorage.setItem('firstName', firstName.trim());
                 localStorage.setItem('lastName', lastName.trim());
                 localStorage.setItem('email', email.trim());
                 localStorage.setItem('phone', phone.trim());
@@ -208,7 +214,7 @@ export default function App() {
                 localStorage.setItem('billingState', billingState.trim());
                 localStorage.setItem('billingZip', billingZip.trim());
                 localStorage.setItem('billingCountry', billingCountry.trim());
-                
+
                 if (organization.trim()) {
                   localStorage.setItem('organization', organization.trim());
                 } else {
@@ -220,7 +226,7 @@ export default function App() {
                 } else {
                   localStorage.removeItem('billingAddress2');
                 }
-                
+
                 const { data } = profileId ? await client.models.Profile.update({ id: profileId, firstName: firstName.trim(), lastName: lastName.trim(), email: (user?.attributes?.email ?? user?.signInDetails?.loginId ?? user?.username ?? email).toString().trim(), phone: phone.trim(), organization: organization.trim() || undefined, billingAddress1: billingAddress1.trim() || undefined, billingAddress2: billingAddress2.trim() || undefined, billingCity: billingCity.trim() || undefined, billingState: billingState.trim() || undefined, billingZip: billingZip.trim() || undefined, billingCountry: billingCountry.trim() || undefined }, { authMode: 'userPool' }) : await client.models.Profile.create({ firstName: firstName.trim(), lastName: lastName.trim(), email: (user?.attributes?.email ?? user?.signInDetails?.loginId ?? user?.username ?? email).toString().trim(), phone: phone.trim(), organization: organization.trim() || undefined, billingAddress1: billingAddress1.trim() || undefined, billingAddress2: billingAddress2.trim() || undefined, billingCity: billingCity.trim() || undefined, billingState: billingState.trim() || undefined, billingZip: billingZip.trim() || undefined, billingCountry: billingCountry.trim() || undefined }, { authMode: 'userPool' }); setProfileId(data.id); localStorage.setItem('profileId', data.id);
 
 
@@ -230,7 +236,7 @@ export default function App() {
             >
               Save profile
             </button>
-            
+
             <button
               style={{ marginTop: 8 }}
               onClick={async () => {
