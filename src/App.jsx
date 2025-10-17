@@ -287,7 +287,7 @@ export default function App() {
                 localStorage.setItem('profileId', data.id);
                 await loadLatest();
                 setSavedToast(true);
-                setTimeout(() => setSavedToast(false), 1600);
+                setTimeout(() => setSavedToast(false), 3000);
 
               }}
             >
