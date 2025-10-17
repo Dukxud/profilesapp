@@ -120,7 +120,7 @@ export default function App() {
             />
 
             <TextField
-              label="Last name"
+              label={<Req text="Last name" />}
               placeholder="e.g., Lovelace"
               width="280px"
               value={lastName}
@@ -129,7 +129,7 @@ export default function App() {
             />
 
             <TextField
-              label="Organization (optional)"
+              label="Organization"
               placeholder="e.g., Acme Corp"
               width="280px"
               value={organization}
@@ -137,7 +137,7 @@ export default function App() {
             />
 
             <TextField
-              label="Email Address"
+              label={<Req text="Email Address" />}
               placeholder="e.g., JohnDoe@gmail.com"
               width="280px"
               value={user?.attributes?.email ?? user?.signInDetails?.loginId ?? user?.username ?? email}
@@ -147,7 +147,7 @@ export default function App() {
             />
 
             <TextField
-              label="Phone"
+              label={<Req text="Phone" />}
               placeholder="e.g., 123-456-7890"
               width="280px"
               value={phone}
