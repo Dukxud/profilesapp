@@ -248,9 +248,10 @@ export default function App() {
                   marginTop: 8,
                   padding: '10px 16px',
                   borderRadius: 10,
-                  border: '1px solid #222',
-                  background: canSave ? '#111' : '#e5e7eb',
+                  border: canSave ? '1px solid #222' : '#e5e7eb',
+                  background: canSave ? '#90d6e9' : '#e5e7eb',
                   color: canSave ? 'white' : '#6b7280',
+                  fontWeight: 700,
                   cursor: canSave ? 'pointer' : 'not-allowed'
                 }}
                 disabled={!canSave}
@@ -265,9 +266,9 @@ export default function App() {
                   localStorage.setItem('billingZip', billingZip.trim());
                   localStorage.setItem('billingCountry', billingCountry.trim());
 
-                  localStorage.setItem('email', (
-                    user?.attributes?.email ?? user?.signInDetails?.loginId ?? user?.username ?? ''
-                  ).toString().trim());
+                  localStorage.setItem('email', 
+                    (user?.attributes?.email ?? user?.signInDetails?.loginId ?? user?.username ?? '').toString().trim()
+                  );
 
                   if (organization.trim()) {
                     localStorage.setItem('organization', organization.trim());
@@ -382,8 +383,9 @@ export default function App() {
                   padding: '10px 16px',
                   borderRadius: 10,
                   border: '1px solid #222',
-                  background: '#111',
+                  background: '#90d6e9',
                   color: 'white',
+                  fontWeight: 700,
                   cursor: 'pointer'
                 }}>
                 Sign out
