@@ -228,7 +228,12 @@ export default function App() {
 
 
             <button
-              style={{ marginTop: 8 }}
+              style={{
+                marginTop: 8,
+                opacity: (!firstName.trim() || !lastName.trim() || !email.trim() || !phone.trim()) ? 0.4 : 1,
+                cursor: (!firstName.trim() || !lastName.trim() || !email.trim() || !phone.trim()) ? 'not-allowed' : 'pointer'
+              }}
+              
               disabled={!firstName.trim() || !lastName.trim() || !phone.trim()}
 
               onClick={async () => {
