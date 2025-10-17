@@ -235,9 +235,37 @@ export default function App() {
                   localStorage.removeItem('billingAddress2');
                 }
 
-                const { data } = profileId ? await client.models.Profile.update({ id: profileId, firstName: firstName.trim(), lastName: lastName.trim(), email: (user?.attributes?.email ?? user?.signInDetails?.loginId ?? user?.username ?? email).toString().trim(), phone: phone.trim(), organization: organization.trim() || undefined, billingAddress1: billingAddress1.trim() || undefined, billingAddress2: billingAddress2.trim() || undefined, billingCity: billingCity.trim() || undefined, billingState: billingState.trim() || undefined, billingZip: billingZip.trim() || undefined, billingCountry: billingCountry.trim() || undefined }, { authMode: 'userPool' }) : await client.models.Profile.create({ firstName: firstName.trim(), lastName: lastName.trim(), email: (user?.attributes?.email ?? user?.signInDetails?.loginId ?? user?.username ?? email).toString().trim(), phone: phone.trim(), organization: organization.trim() || undefined, billingAddress1: billingAddress1.trim() || undefined, billingAddress2: billingAddress2.trim() || undefined, billingCity: billingCity.trim() || undefined, billingState: billingState.trim() || undefined, billingZip: billingZip.trim() || undefined, billingCountry: billingCountry.trim() || undefined }, { authMode: 'userPool' }); setProfileId(data.id); localStorage.setItem('profileId', data.id);
+                // replace your current upsert line with this block
+                const cognitoEmail = (
+                  user?.attributes?.email ??
+                  user?.signInDetails?.loginId ??
+                  user?.username ??
+                  email
+                ).toString().trim();
 
+                // empty → null (clears in DB)
+                const nn = (s) => (s.trim() === '' ? null : s.trim());
 
+                const payload = {
+                  firstName: firstName.trim(),
+                  lastName: lastName.trim(),
+                  email: cognitoEmail,
+                  phone: phone.trim(),
+                  organization: nn(organization),
+                  billingAddress1: nn(billingAddress1),
+                  billingAddress2: nn(billingAddress2),
+                  billingCity: nn(billingCity),
+                  billingState: nn(billingState),
+                  billingZip: nn(billingZip),
+                  billingCountry: nn(billingCountry),
+                };
+
+                const { data } = profileId
+                  ? await client.models.Profile.update({ id: profileId, ...payload }, { authMode: 'userPool' })
+                  : await client.models.Profile.create(payload, { authMode: 'userPool' });
+
+                setProfileId(data.id);
+                localStorage.setItem('profileId', data.id);
 
 
               }}
