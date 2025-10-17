@@ -248,9 +248,9 @@ export default function App() {
                   marginTop: 8,
                   padding: '10px 16px',
                   borderRadius: 10,
-                  border: canSave ? '1px solid #222' : '#e5e7eb',
+                  border: canSave ? '1px solid #6b7280' : '#e5e7eb',
                   background: canSave ? '#90d6e9' : '#e5e7eb',
-                  color: canSave ? 'white' : '#6b7280',
+                  color: canSave ? '#6b7280' : 'white',
                   fontWeight: 700,
                   cursor: canSave ? 'pointer' : 'not-allowed'
                 }}
@@ -382,9 +382,9 @@ export default function App() {
                   marginTop: 8, marginLeft: 8,
                   padding: '10px 16px',
                   borderRadius: 10,
-                  border: '1px solid #222',
+                  border: '1px solid #6b7280',
                   background: '#90d6e9',
-                  color: 'white',
+                  color: '#6b7280',
                   fontWeight: 700,
                   cursor: 'pointer'
                 }}>
