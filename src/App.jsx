@@ -55,6 +55,19 @@ export default function App() {
         useEffect(() => {
           if (!user) return;
           let cancelled = false;
+
+          const currentOwner = user?.userId ?? user?.attributes?.sub ?? user?.username;
+          const storedOwner  = localStorage.getItem('profileOwner');
+          if (storedOwner && storedOwner !== String(currentOwner)) {
+            // different person signed in → clear local carryover
+            ['profileId','firstName','lastName','email','phone','organization',
+            'billingAddress1','billingAddress2','billingCity','billingState',
+            'billingZip','billingCountry'].forEach((k) => localStorage.removeItem(k));
+            setProfileId('');
+          }
+          localStorage.setItem('profileOwner', String(currentOwner || ''));
+
+
           (async () => {
             try {
               const { data } = await client.models.Profile.list({ authMode: 'userPool' });
