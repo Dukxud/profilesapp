@@ -1,6 +1,5 @@
 // src/App.jsx
-import { useState, useEffect } from 'react';
-
+import { useState, useEffect, useMemo } from 'react';
 import { Authenticator, View, Heading, TextField, useAuthenticator } from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
 import { generateClient } from 'aws-amplify/data';
@@ -10,32 +9,41 @@ export default function App() {
   const client = generateClient();
   const authUser = undefined; // temp: avoid useAuthenticator outside provider
 
-  function AutoLoad({ user }) {
-    useEffect(() => {
-      if (!user) return;
-      (async () => {
-        try {
-          const { data } = await client.models.Profile.list({ authMode: 'userPool' });
-          const p = data.at(-1);
-          if (!p) return;
-          setProfileId(p.id);
-          setFirstName(p.firstName ?? '');
-          setLastName(p.lastName ?? '');
-          setPhone(p.phone ?? '');
-          setCompany(p.organization ?? '');
-          setBillingAddress1(p.billingAddress1 ?? '');
-          setBillingAddress2(p.billingAddress2 ?? '');
-          setBillingCity(p.billingCity ?? '');
-          setBillingState(p.billingState ?? '');
-          setBillingZip(p.billingZip ?? '');
-          setBillingCountry(p.billingCountry ?? '');
-        } catch (e) {
-          console.error('auto-load profile failed', e);
-        }
-      })();
-    }, [user?.userId]);
-    return null;
-  }
+  const AutoLoad = useMemo(
+    () =>
+      function AutoLoad({ user }) {
+        useEffect(() => {
+          if (!user) return;
+          let cancelled = false;
+          (async () => {
+            try {
+              const { data } = await client.models.Profile.list({ authMode: 'userPool' });
+              const p = data.at(-1);
+              if (!p || cancelled) return;
+              setProfileId(p.id);
+              setFirstName(p.firstName ?? '');
+              setLastName(p.lastName ?? '');
+              setPhone(p.phone ?? '');
+              setCompany(p.organization ?? '');
+              setBillingAddress1(p.billingAddress1 ?? '');
+              setBillingAddress2(p.billingAddress2 ?? '');
+              setBillingCity(p.billingCity ?? '');
+              setBillingState(p.billingState ?? '');
+              setBillingZip(p.billingZip ?? '');
+              setBillingCountry(p.billingCountry ?? '');
+            } catch (e) {
+              console.error('auto-load profile failed', e);
+            }
+          })();
+          return () => {
+            cancelled = true;
+          };
+        }, [user?.userId]);
+        return null;
+      },
+    []
+  );
+  
 
 
   const [firstName, setFirstName] = useState(() => localStorage.getItem('firstName') || '');
