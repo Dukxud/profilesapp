@@ -233,15 +233,24 @@ export default function App() {
               </div>
             )}
 
+            const canSave = Boolean(
+              firstName.trim() &&
+              lastName.trim() &&
+              phone.trim() &&
+              (user?.attributes?.email ?? user?.signInDetails?.loginId ?? user?.username)
+            );
 
             <button
               style={{
                 marginTop: 8,
-                opacity: (!firstName.trim() || !lastName.trim() || !email.trim() || !phone.trim()) ? 0.4 : 1,
-                cursor: (!firstName.trim() || !lastName.trim() || !email.trim() || !phone.trim()) ? 'not-allowed' : 'pointer'
+                padding: '10px 16px',
+                borderRadius: 10,
+                border: '1px solid #222',
+                background: canSave ? '#111' : '#e5e7eb',
+                color: canSave ? 'white' : '#6b7280',
+                cursor: canSave ? 'pointer' : 'not-allowed'
               }}
-
-              disabled={!firstName.trim() || !lastName.trim() || !phone.trim()}
+              disabled={!canSave}
 
               onClick={async () => {
                 localStorage.setItem('firstName', firstName.trim());
