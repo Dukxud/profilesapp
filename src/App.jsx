@@ -395,10 +395,10 @@ export default function App() {
 
               <button
                 onClick={() => {
-                  // [
-                  //   'profileOwner','profileId','firstName','lastName','email','phone','organization',
-                  //   'billingAddress1','billingAddress2','billingCity','billingState','billingZip','billingCountry'
-                  // ].forEach((k) => localStorage.removeItem(k)); // clear our app’s cache first
+                  [
+                    'profileOwner','profileId','firstName','lastName','email','phone','organization',
+                    'billingAddress1','billingAddress2','billingCity','billingState','billingZip','billingCountry'
+                  ].forEach((k) => localStorage.removeItem(k)); // clear our app’s cache first
                   signOut(); // then end the Cognito session
                 }}
 
