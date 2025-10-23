@@ -73,6 +73,17 @@ export default function App() {
               'billingZip','billingCountry'
             ].forEach((k) => localStorage.removeItem(k));
             setProfileId('');
+            setFirstName('');
+            setLastName('');
+            setPhone('');
+            setCompany('');
+            setBillingAddress1('');
+            setBillingAddress2('');
+            setBillingCity('');
+            setBillingState('');
+            setBillingZip('');
+            setBillingCountry('');
+            setEmail('');
           }
           
           // Always write the current owner after the check
@@ -90,7 +101,7 @@ export default function App() {
           return () => {
             cancelled = true;
           };
-        }, [user?.userId]);
+        }, [user?.attributes?.sub]);
         return null;
       },
     []
@@ -261,7 +272,7 @@ export default function App() {
                   marginTop: 8,
                   padding: '10px 16px',
                   borderRadius: 10,
-                  border: canSave ? '1px solid #6b7280' : '#e5e7eb',
+                  border: canSave ? '1px solid #6b7280' : '1px solid #e5e7eb',
                   background: canSave ? '#90d6e9' : '#e5e7eb',
                   color: canSave ? '#6b7280' : 'white',
                   fontWeight: 700,
@@ -325,11 +336,9 @@ export default function App() {
                     : await client.models.Profile.create(payload, { authMode: 'userPool' });
 
                   setProfileId(data.id);
-
-                  localStorage.setItem(
-                    'profileOwner',
-                    String(user?.userId ?? user?.attributes?.sub ?? user?.username ?? '')
-                  );
+                  localStorage.setItem('profileId', data.id);
+                  localStorage.setItem('profileOwner', String(user?.attributes?.sub || ''));
+                  
                   await loadLatest();
                   setSavedToast(true);
                   setTimeout(() => setSavedToast(false), 3000);
@@ -385,9 +394,8 @@ export default function App() {
               <button
                 style={{ marginTop: 8 }}
                 onClick={async () => {
-                  const { data } = await client.models.Profile.list({ authMode: 'userPool' });
-                  const p = data.at(-1);
-                  alert(p ? JSON.stringify(p, null, 2) : 'No profile found');
+                  const { data } = profileId ? await client.models.Profile.get({ id: profileId }, { authMode: 'userPool' })
+                  : { data: null };
                 }}
               >
                 Debug: view backend profile
