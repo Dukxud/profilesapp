@@ -135,23 +135,30 @@ export default function App() {
               
             <AutoLoad user={user} />
 
+            {/* TAB BAR (bar-style, single segmented control) */}
             <div
               role="tablist"
               aria-label="Profile sections"
-              style={{ display: 'flex', gap: 8, marginBottom: 12 }}
+              style={{
+                display: 'inline-flex',
+                border: '1px solid #222',
+                borderRadius: 9999,
+                overflow: 'hidden',
+                marginBottom: 12
+              }}
             >
               <button
                 role="tab"
                 aria-selected={activeTab === 'profile'}
                 onClick={() => setActiveTab('profile')}
                 style={{
-                  padding: '8px 12px',
-                  borderRadius: 8,
-                  border: '1px solid #222',
-                  background: activeTab === 'profile' ? '#90d6e9' : '#e5e7eb',
-                  color: '#111',
+                  padding: '8px 16px',
                   fontWeight: 700,
-                  cursor: 'pointer'
+                  background: activeTab === 'profile' ? '#90d6e9' : '#f4f4f5',
+                  color: '#111',
+                  cursor: 'pointer',
+                  border: 'none',
+                  outline: 'none'
                 }}
               >
                 Profile
@@ -162,18 +169,22 @@ export default function App() {
                 aria-selected={activeTab === 'documents'}
                 onClick={() => setActiveTab('documents')}
                 style={{
-                  padding: '8px 12px',
-                  borderRadius: 8,
-                  border: '1px solid #222',
-                  background: activeTab === 'documents' ? '#90d6e9' : '#e5e7eb',
-                  color: '#111',
+                  padding: '8px 16px',
                   fontWeight: 700,
-                  cursor: 'pointer'
+                  background: activeTab === 'documents' ? '#90d6e9' : '#f4f4f5',
+                  color: '#111',
+                  cursor: 'pointer',
+                  borderLeft: '1px solid #222',   // divider inside the bar
+                  borderTop: 'none',
+                  borderRight: 'none',
+                  borderBottom: 'none',
+                  outline: 'none'
                 }}
               >
                 Uploads
               </button>
             </div>
+
 
 
 
