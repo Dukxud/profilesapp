@@ -46,8 +46,8 @@ export default function App() {
       });
       setUploads(items ?? []);
     } catch (e) {
-      console.error(e);
-      alert('Could not load uploads.');
+      console.warn('refreshUploads failed:', e);
+      setUploads([]); // fall back to empty list, no pop-up
     } finally {
       setLoadingUploads(false);
     }
