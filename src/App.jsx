@@ -105,8 +105,6 @@ export default function App() {
 
   return (
     <div className="auth-shell">
-      {/* “Accidental” watermark in the corner */}
-      <img className="brand-watermark" src="/company.png" alt="" width={128} height={128} />
 
       <Authenticator
         style={{ width: '100%', maxWidth: 420 }}
@@ -185,10 +183,19 @@ export default function App() {
               </button>
             </div>
 
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 12,
+                marginTop: 4,
+              }}
+            >
+              <img src="/company.png" alt="AIVault" width={48} height={48} />
+              <h1 style={{ margin: 0 }}>Welcome {firstName}</h1>
+            </div>
 
-
-
-            <h1>Welcome {firstName}</h1>
             <div style={{ fontSize: 12, color: '#6b7280' }}>
               {lastUpdated ? `Last saved: ${new Date(lastUpdated).toLocaleString()}` : 'Not saved yet'}
             </div>
