@@ -59,6 +59,14 @@ export default function App() {
     }
   }
   
+  // Auto-load the user's uploads when the Uploads tab is selected
+  useEffect(() => {
+    if (activeTab === 'documents') {
+      refreshUploads();
+    }
+  }, [activeTab]);
+
+
 
   async function loadLatest() {
     const opts = { authMode: 'userPool' };
@@ -156,8 +164,8 @@ export default function App() {
                 <img
                   src="/company.png"
                   alt="AIVault"
-                  width={64}
-                  height={64}
+                  width={128}
+                  height={128}
                   style={{ display: 'block', margin: '0 auto 6px' }}
                 />
                 <Heading level={3} marginTop="0.25rem">
@@ -567,65 +575,43 @@ export default function App() {
 
 
                   <div style={{ fontSize: 12, color: '#6b7280', marginTop: 8 }}>
-                    (We’ll wire this to S3 next sip—this just picks a file)
-                  </div>
-
-                  <div style={{ marginTop: 12 }}>
-                    <button
-                      onClick={refreshUploads}
-                      disabled={loadingUploads}
-                      style={{
-                        padding: '6px 10px',
-                        borderRadius: 8,
-                        border: '1px solid #222',
-                        background: '#f4f4f5',
-                        cursor: loadingUploads ? 'not-allowed' : 'pointer',
-                        fontWeight: 600
-                      }}
-                    >
-                      {loadingUploads ? 'Refreshing…' : 'Refresh list'}
-                    </button>
-
-                    <ul style={{ marginTop: 8, maxHeight: 180, overflowY: 'auto', paddingLeft: 16 }}>
-                    {uploads.length === 0 ? (
-                      <li style={{ color: '#6b7280' }}>No uploads yet.</li>
-                    ) : (
-                      uploads.map((item) => (
-                        <li key={item.path} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                          <span style={{ flex: 1 }}>
-                            {item.path.split('/').pop()} — {item.size ?? 0} bytes
-                          </span>
-                          <button
-                            onClick={async () => {
-                              try {
-                                const { url } = await getUrl({
-                                  path: item.path,
-                                  options: { expiresIn: 300 }, // 5 minutes
-                                });
-                                window.open(url.toString(), '_blank', 'noopener,noreferrer');
-                              } catch (e) {
-                                console.error('getUrl failed:', e);
-                                alert('Could not open file.');
-                              }
-                            }}
-                            style={{
-                              padding: '4px 8px',
-                              borderRadius: 6,
-                              border: '1px solid #222',
-                              background: '#f4f4f5',
-                              cursor: 'pointer',
-                              fontWeight: 600
-                            }}
-                          >
-                            Open
-                          </button>
-                        </li>
-                      ))
-                    )}
+                    <ul style={{ marginTop: 12, maxHeight: 180, overflowY: 'auto', paddingLeft: 16 }}>
+                      {uploads.length === 0 ? (
+                        <li style={{ color: '#6b7280' }}>No uploads yet.</li>
+                      ) : (
+                        uploads.map((item) => (
+                          <li key={item.path} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                            <span style={{ flex: 1 }}>
+                              {item.path.split('/').pop()} — {item.size ?? 0} bytes
+                            </span>
+                            <button
+                              onClick={async () => {
+                                try {
+                                  const { url } = await getUrl({
+                                    path: item.path,
+                                    options: { expiresIn: 300 },
+                                  });
+                                  window.open(url.toString(), '_blank', 'noopener,noreferrer');
+                                } catch (e) {
+                                  console.error('getUrl failed:', e);
+                                  alert('Could not open file.');
+                                }
+                              }}
+                              style={{
+                                padding: '4px 8px',
+                                borderRadius: 6,
+                                border: '1px solid #222',
+                                background: '#f4f4f5',
+                                cursor: 'pointer',
+                                fontWeight: 600
+                              }}
+                            >
+                              Open
+                            </button>
+                          </li>
+                        ))
+                      )}
                     </ul>
-
-                  </div>
-
 
                   <button
                     onClick={() => {
