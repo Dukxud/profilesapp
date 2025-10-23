@@ -609,9 +609,7 @@ export default function App() {
                         ))
                       )}
                     </ul>
-                </div>
-
-                <button
+                    <button
                   onClick={() => {
 
 
@@ -656,12 +654,14 @@ export default function App() {
                     background: '#90d6e9',
                     color: '#111',
                     fontWeight: 700,
+                    fontSize: 16,
                     cursor: 'pointer'
                   }}
                   
                 >
                 Sign out
                 </button>
+                </div>
               </div>
               )}
       
