@@ -3,6 +3,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { Authenticator, View, Heading, TextField} from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
 import { generateClient } from 'aws-amplify/data';
+import { list } from 'aws-amplify/storage';
 
 const Req = ({ text }) => (
   <span>
@@ -32,7 +33,31 @@ export default function App() {
   const [lastUpdated, setLastUpdated] = useState('');
   const [activeTab, setActiveTab] = useState('profile');
   const [docFile, setDocFile] = useState(null);
+  const [uploads, setUploads] = useState([]);
+  const [loadingUploads, setLoadingUploads] = useState(false);
 
+  async function refreshUploads() {
+    try {
+      setLoadingUploads(true);
+      const { items } = await list({
+        // This scopes to the signed-in user’s folder:
+        path: ({ identityId }) => `uploads/${identityId}/`,
+        options: { pageSize: 50 },
+      });
+      setUploads(items ?? []);
+    } catch (e) {
+      console.error(e);
+      alert('Could not load uploads.');
+    } finally {
+      setLoadingUploads(false);
+    }
+  }
+  
+  useEffect(() => {
+    if (activeTab === 'documents') {
+      refreshUploads();
+    }
+  }, [activeTab]);
 
 
   async function loadLatest() {
