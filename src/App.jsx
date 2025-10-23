@@ -391,7 +391,7 @@ export default function App() {
                     borderRadius: 10,
                     border: canSave ? '1px solid #6b7280' : '1px solid #e5e7eb',
                     background: canSave ? '#90d6e9' : '#e5e7eb',
-                    color: canSave ? '#6b7280' : 'white',
+                    color: canSave ? '#111' : 'white',
                     fontWeight: 700,
                     cursor: canSave ? 'pointer' : 'not-allowed'
                   }}
@@ -660,6 +660,7 @@ export default function App() {
                       fontWeight: 700,
                       cursor: 'pointer'
                     }}
+                    
                   >
                   Sign out
                   </button>
