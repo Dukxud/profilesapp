@@ -31,7 +31,7 @@ export default function App() {
   const [saving, setSaving] = useState(false);
   const [lastUpdated, setLastUpdated] = useState('');
   const [activeTab, setActiveTab] = useState('profile');
-
+  const [docFile, setDocFile] = useState(null);
 
 
 
@@ -85,6 +85,7 @@ export default function App() {
           setBillingState('');
           setBillingZip('');
           setBillingCountry('');
+          setLastUpdated('');
           setEmail(user?.attributes?.email ?? user?.signInDetails?.loginId ?? user?.username ?? '');
         
           (async () => {
@@ -199,187 +200,220 @@ export default function App() {
             <div style={{ fontSize: 12, color: '#6b7280' }}>
               {lastUpdated ? `Last saved: ${new Date(lastUpdated).toLocaleString()}` : 'Not saved yet'}
             </div>
+            {activeTab === 'profile' && (<div>
 
-            <h2 style={{ marginTop: 24, marginBottom: 8 }}>Personal Information</h2>
+              <h2 style={{ marginTop: 24, marginBottom: 8 }}>Personal Information</h2>
 
-            <TextField
-              label={<Req text="First name" />}
-              placeholder="e.g., Ada"
-              width="280px"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-              isRequired
-            />
+              <TextField
+                label={<Req text="First name" />}
+                placeholder="e.g., Ada"
+                width="280px"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                isRequired
+              />
 
-            <TextField
-              label={<Req text="Last name" />}
-              placeholder="e.g., Lovelace"
-              width="280px"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-              isRequired
-            />
+              <TextField
+                label={<Req text="Last name" />}
+                placeholder="e.g., Lovelace"
+                width="280px"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                isRequired
+              />
 
-            <TextField
-              label="Organization"
-              placeholder="e.g., Acme Corp"
-              width="280px"
-              value={organization}
-              onChange={(e) => setCompany(e.target.value)}
-            />
+              <TextField
+                label="Organization"
+                placeholder="e.g., Acme Corp"
+                width="280px"
+                value={organization}
+                onChange={(e) => setCompany(e.target.value)}
+              />
 
-            <TextField
-              label={<Req text="Email Address" />}
-              placeholder="e.g., JohnDoe@gmail.com"
-              width="280px"
-              value={user?.attributes?.email ?? user?.signInDetails?.loginId ?? user?.username ?? email}
-              onChange={(e) => setEmail(e.target.value)}
-              isRequired
-              isReadOnly
-            />
+              <TextField
+                label={<Req text="Email Address" />}
+                placeholder="e.g., JohnDoe@gmail.com"
+                width="280px"
+                value={user?.attributes?.email ?? user?.signInDetails?.loginId ?? user?.username ?? email}
+                onChange={(e) => setEmail(e.target.value)}
+                isRequired
+                isReadOnly
+              />
 
-            <TextField
-              label={<Req text="Phone" />}
-              placeholder="e.g., 123-456-7890"
-              width="280px"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              isRequired
-            />
+              <TextField
+                label={<Req text="Phone" />}
+                placeholder="e.g., 123-456-7890"
+                width="280px"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                isRequired
+              />
 
-            <h2 style={{ marginTop: 24, marginBottom: 8 }}>Billing Information</h2>
+              <h2 style={{ marginTop: 24, marginBottom: 8 }}>Billing Information</h2>
 
 
-            <TextField
-              label="Address line 1"
-              placeholder="e.g., 123 Main St"
-              width="280px"
-              value={billingAddress1}
-              onChange={(e) => setBillingAddress1(e.target.value)}
-              isRequired
-            />
+              <TextField
+                label="Address line 1"
+                placeholder="e.g., 123 Main St"
+                width="280px"
+                value={billingAddress1}
+                onChange={(e) => setBillingAddress1(e.target.value)}
+                isRequired
+              />
 
-            <TextField
-              label="Address line 2"
-              placeholder="e.g., Unit 1103"
-              width="280px"
-              value={billingAddress2}
-              onChange={(e) => setBillingAddress2(e.target.value)}
-            />
+              <TextField
+                label="Address line 2"
+                placeholder="e.g., Unit 1103"
+                width="280px"
+                value={billingAddress2}
+                onChange={(e) => setBillingAddress2(e.target.value)}
+              />
 
-            <TextField
-              label="City"
-              placeholder="e.g., New York City"
-              width="280px"
-              value={billingCity}
-              onChange={(e) => setBillingCity(e.target.value)}
-              isRequired
-            />
+              <TextField
+                label="City"
+                placeholder="e.g., New York City"
+                width="280px"
+                value={billingCity}
+                onChange={(e) => setBillingCity(e.target.value)}
+                isRequired
+              />
 
-            <TextField
-              label="State"
-              placeholder="e.g., New York"
-              width="280px"
-              value={billingState}
-              onChange={(e) => setBillingState(e.target.value)}
-              isRequired
-            />
+              <TextField
+                label="State"
+                placeholder="e.g., New York"
+                width="280px"
+                value={billingState}
+                onChange={(e) => setBillingState(e.target.value)}
+                isRequired
+              />
 
-            <TextField
-              label="Zip Code"
-              placeholder="e.g., 10001"
-              width="280px"
-              value={billingZip}
-              onChange={(e) => setBillingZip(e.target.value)}
-              isRequired
-            />
+              <TextField
+                label="Zip Code"
+                placeholder="e.g., 10001"
+                width="280px"
+                value={billingZip}
+                onChange={(e) => setBillingZip(e.target.value)}
+                isRequired
+              />
 
-            <TextField
-              label="Country"
-              placeholder="e.g., United States of America"
-              width="280px"
-              value={billingCountry}
-              onChange={(e) => setBillingCountry(e.target.value)}
-              isRequired
-            />
+              <TextField
+                label="Country"
+                placeholder="e.g., United States of America"
+                width="280px"
+                value={billingCountry}
+                onChange={(e) => setBillingCountry(e.target.value)}
+                isRequired
+              />
 
-            <div style={{ color: 'red', marginTop: 12 }}>TODO: Add Terms of Service & Privacy Policy consent</div>
+              <div style={{ color: 'red', marginTop: 12 }}>TODO: Add Terms of Service & Privacy Policy consent</div>
 
-            {savedToast && (
-                <div
-                  role="status"
-                  aria-live="polite"
+              {savedToast && (
+                  <div
+                    role="status"
+                    aria-live="polite"
+                    style={{
+                      position: 'fixed',
+                      right: 16,
+                      bottom: 16,
+                      background: '#10b981',
+                      color: 'white',
+                      padding: '10px 14px',
+                      borderRadius: 12,
+                      boxShadow: '0 6px 20px rgba(0,0,0,.2)',
+                      fontWeight: 600
+                    }}
+                  >
+                    Saved ✓
+                  </div>
+              )}
+
+                <button
                   style={{
-                    position: 'fixed',
-                    right: 16,
-                    bottom: 16,
-                    background: '#10b981',
-                    color: 'white',
-                    padding: '10px 14px',
-                    borderRadius: 12,
-                    boxShadow: '0 6px 20px rgba(0,0,0,.2)',
-                    fontWeight: 600
+                    marginTop: 8,
+                    padding: '10px 16px',
+                    borderRadius: 10,
+                    border: canSave ? '1px solid #6b7280' : '1px solid #e5e7eb',
+                    background: canSave ? '#90d6e9' : '#e5e7eb',
+                    color: canSave ? '#6b7280' : 'white',
+                    fontWeight: 700,
+                    cursor: canSave ? 'pointer' : 'not-allowed'
+                  }}
+                  disabled={!canSave || saving}
+                  onClick={async () => {
+                    if (saving) return;        
+                    setSaving(true);           
+                    try {
+                      const cognitoEmail = (
+                        user?.attributes?.email ??
+                        user?.signInDetails?.loginId ??
+                        user?.username ??
+                        email
+                      ).toString().trim();
+
+                      const nn = (s) => (s.trim() === '' ? null : s.trim());
+
+                      const payload = {
+                        firstName: firstName.trim(),
+                        lastName:  lastName.trim(),
+                        email:     cognitoEmail,
+                        phone:     phone.trim(),
+                        organization:   nn(organization),
+                        billingAddress1: nn(billingAddress1),
+                        billingAddress2: nn(billingAddress2),
+                        billingCity:     nn(billingCity),
+                        billingState:    nn(billingState),
+                        billingZip:      nn(billingZip),
+                        billingCountry:  nn(billingCountry),
+                      };
+
+                      const { data } = profileId
+                        ? await client.models.Profile.update({ id: profileId, ...payload }, { authMode: 'userPool' })
+                        : await client.models.Profile.create(payload, { authMode: 'userPool' });
+
+                      setProfileId(data.id);
+                      setLastUpdated(data?.updatedAt || data?.createdAt || new Date().toISOString());
+                      await loadLatest();
+                      setSavedToast(true);
+                      setTimeout(() => setSavedToast(false), 3000);
+                    } finally {
+                      setSaving(false);
+                    }
                   }}
                 >
-                  Saved ✓
+                  {saving ? 'Saving…' : 'Save profile'}
+                </button>
+
+              </div>)}
+
+
+              {activeTab === 'documents' && (
+                <div>
+                  <h2 style={{ marginTop: 24, marginBottom: 8 }}>Uploads</h2>
+
+                  <label style={{ display: 'block', width: 280 }}>
+                    <span style={{ display: 'block', marginBottom: 4 }}>
+                      Upload a file (PDF or image)
+                    </span>
+                    <input
+                      type="file"
+                      accept=".pdf,image/*"
+                      onChange={(e) => setDocFile(e.target.files?.[0] ?? null)}
+                      style={{ width: '100%' }}
+                    />
+                  </label>
+
+                  {docFile && (
+                    <div style={{ fontSize: 12, color: '#6b7280', marginTop: 6 }}>
+                      Selected: {docFile.name} ({Math.ceil(docFile.size / 1024)} KB)
+                    </div>
+                  )}
+
+                  <div style={{ fontSize: 12, color: '#6b7280', marginTop: 8 }}>
+                    (We’ll wire this to S3 next sip—this just picks a file)
+                  </div>
                 </div>
-            )}
+              )}
 
-              <button
-                style={{
-                  marginTop: 8,
-                  padding: '10px 16px',
-                  borderRadius: 10,
-                  border: canSave ? '1px solid #6b7280' : '1px solid #e5e7eb',
-                  background: canSave ? '#90d6e9' : '#e5e7eb',
-                  color: canSave ? '#6b7280' : 'white',
-                  fontWeight: 700,
-                  cursor: canSave ? 'pointer' : 'not-allowed'
-                }}
-                disabled={!canSave || saving}
-                onClick={async () => {
-                  if (saving) return;        
-                  setSaving(true);           
-                  try {
-                    const cognitoEmail = (
-                      user?.attributes?.email ??
-                      user?.signInDetails?.loginId ??
-                      user?.username ??
-                      email
-                    ).toString().trim();
-
-                    const nn = (s) => (s.trim() === '' ? null : s.trim());
-
-                    const payload = {
-                      firstName: firstName.trim(),
-                      lastName:  lastName.trim(),
-                      email:     cognitoEmail,
-                      phone:     phone.trim(),
-                      organization:   nn(organization),
-                      billingAddress1: nn(billingAddress1),
-                      billingAddress2: nn(billingAddress2),
-                      billingCity:     nn(billingCity),
-                      billingState:    nn(billingState),
-                      billingZip:      nn(billingZip),
-                      billingCountry:  nn(billingCountry),
-                    };
-
-                    const { data } = profileId
-                      ? await client.models.Profile.update({ id: profileId, ...payload }, { authMode: 'userPool' })
-                      : await client.models.Profile.create(payload, { authMode: 'userPool' });
-
-                    setProfileId(data.id);
-                    setLastUpdated(data?.updatedAt || data?.createdAt || new Date().toISOString());
-                    await loadLatest();
-                    setSavedToast(true);
-                    setTimeout(() => setSavedToast(false), 3000);
-                  } finally {
-                    setSaving(false);
-                  }
-                }}
-              >
-                {saving ? 'Saving…' : 'Save profile'}
-              </button>
 
               <button
                 onClick={() => {
