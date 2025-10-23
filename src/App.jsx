@@ -3,7 +3,8 @@ import { useState, useEffect, useMemo } from 'react';
 import { Authenticator, View, Heading, TextField} from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
 import { generateClient } from 'aws-amplify/data';
-import { list, uploadData } from 'aws-amplify/storage';
+import { list, uploadData, getUrl } from 'aws-amplify/storage';
+
 
 const Req = ({ text }) => (
   <span>
@@ -529,16 +530,43 @@ export default function App() {
                     </button>
 
                     <ul style={{ marginTop: 8, maxHeight: 180, overflowY: 'auto', paddingLeft: 16 }}>
-                      {uploads.length === 0 ? (
-                        <li style={{ color: '#6b7280' }}>No uploads yet.</li>
-                      ) : (
-                        uploads.map((item) => (
-                          <li key={item.path}>
+                    {uploads.length === 0 ? (
+                      <li style={{ color: '#6b7280' }}>No uploads yet.</li>
+                    ) : (
+                      uploads.map((item) => (
+                        <li key={item.path} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                          <span style={{ flex: 1 }}>
                             {item.path.split('/').pop()} — {item.size ?? 0} bytes
-                          </li>
-                        ))
-                      )}
+                          </span>
+                          <button
+                            onClick={async () => {
+                              try {
+                                const { url } = await getUrl({
+                                  path: item.path,
+                                  options: { expiresIn: 300 }, // 5 minutes
+                                });
+                                window.open(url.toString(), '_blank', 'noopener,noreferrer');
+                              } catch (e) {
+                                console.error('getUrl failed:', e);
+                                alert('Could not open file.');
+                              }
+                            }}
+                            style={{
+                              padding: '4px 8px',
+                              borderRadius: 6,
+                              border: '1px solid #222',
+                              background: '#f4f4f5',
+                              cursor: 'pointer',
+                              fontWeight: 600
+                            }}
+                          >
+                            Open
+                          </button>
+                        </li>
+                      ))
+                    )}
                     </ul>
+                    
                   </div>
 
 
