@@ -184,23 +184,25 @@ export default function App() {
               </button>
             </div>
 
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: 12,
-                marginTop: 4,
-              }}
-            >
-              <img src="/company.png" alt="AIVault" width={96} height={96} />
-              <h1 style={{ margin: 0 }}>Welcome {firstName}</h1>
-            </div>
 
-            <div style={{ fontSize: 12, color: '#6b7280' }}>
-              {lastUpdated ? `Last saved: ${new Date(lastUpdated).toLocaleString()}` : 'Not saved yet'}
-            </div>
             {activeTab === 'profile' && (<div>
+
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 12,
+                  marginTop: 4,
+                }}
+                >
+                  <img src="/company.png" alt="AIVault" width={96} height={96} />
+                  <h1 style={{ margin: 0 }}>Welcome {firstName}</h1>
+              </div>
+
+              <div style={{ fontSize: 12, color: '#6b7280' }}>
+                {lastUpdated ? `Last saved: ${new Date(lastUpdated).toLocaleString()}` : 'Not saved yet'}
+              </div>
 
               <h2 style={{ marginTop: 24, marginBottom: 8 }}>Personal Information</h2>
 
@@ -383,6 +385,28 @@ export default function App() {
                   {saving ? 'Saving…' : 'Save profile'}
                 </button>
 
+                <button
+                  onClick={() => {
+                    [
+                      'profileOwner','profileId','firstName','lastName','email','phone','organization',
+                      'billingAddress1','billingAddress2','billingCity','billingState','billingZip','billingCountry'
+                    ].forEach((k) => localStorage.removeItem(k));
+                    signOut(); // then end the Cognito session
+                  }}
+
+                  style={{
+                    marginTop: 8, marginLeft: 8,
+                    padding: '10px 16px',
+                    borderRadius: 10,
+                    border: '1px solid #6b7280',
+                    background: '#90d6e9',
+                    color: '#6b7280',
+                    fontWeight: 700,
+                    cursor: 'pointer'
+                  }}>
+                  Sign out
+                </button>
+
               </div>)}
 
 
@@ -411,31 +435,33 @@ export default function App() {
                   <div style={{ fontSize: 12, color: '#6b7280', marginTop: 8 }}>
                     (We’ll wire this to S3 next sip—this just picks a file)
                   </div>
+
+                  <button
+                  onClick={() => {
+                    [
+                      'profileOwner','profileId','firstName','lastName','email','phone','organization',
+                      'billingAddress1','billingAddress2','billingCity','billingState','billingZip','billingCountry'
+                    ].forEach((k) => localStorage.removeItem(k));
+                    signOut(); // then end the Cognito session
+                  }}
+
+                  style={{
+                    marginTop: 8, marginLeft: 8,
+                    padding: '10px 16px',
+                    borderRadius: 10,
+                    border: '1px solid #6b7280',
+                    background: '#90d6e9',
+                    color: '#6b7280',
+                    fontWeight: 700,
+                    cursor: 'pointer'
+                  }}>
+                  Sign out
+                  </button>
                 </div>
               )}
 
 
-              <button
-                onClick={() => {
-                  [
-                    'profileOwner','profileId','firstName','lastName','email','phone','organization',
-                    'billingAddress1','billingAddress2','billingCity','billingState','billingZip','billingCountry'
-                  ].forEach((k) => localStorage.removeItem(k));
-                  signOut(); // then end the Cognito session
-                }}
 
-                style={{
-                  marginTop: 8, marginLeft: 8,
-                  padding: '10px 16px',
-                  borderRadius: 10,
-                  border: '1px solid #6b7280',
-                  background: '#90d6e9',
-                  color: '#6b7280',
-                  fontWeight: 700,
-                  cursor: 'pointer'
-                }}>
-                Sign out
-              </button>
 
             </main>
           );
