@@ -30,6 +30,7 @@ export default function App() {
   const [savedToast, setSavedToast] = useState(false);
   const [saving, setSaving] = useState(false);
   const [lastUpdated, setLastUpdated] = useState('');
+  const [activeTab, setActiveTab] = useState('profile');
 
 
 
@@ -133,6 +134,49 @@ export default function App() {
             <main className="app-authed">
               
             <AutoLoad user={user} />
+
+            <div
+              role="tablist"
+              aria-label="Profile sections"
+              style={{ display: 'flex', gap: 8, marginBottom: 12 }}
+            >
+              <button
+                role="tab"
+                aria-selected={activeTab === 'profile'}
+                onClick={() => setActiveTab('profile')}
+                style={{
+                  padding: '8px 12px',
+                  borderRadius: 8,
+                  border: '1px solid #222',
+                  background: activeTab === 'profile' ? '#90d6e9' : '#e5e7eb',
+                  color: '#111',
+                  fontWeight: 700,
+                  cursor: 'pointer'
+                }}
+              >
+                Profile
+              </button>
+
+              <button
+                role="tab"
+                aria-selected={activeTab === 'documents'}
+                onClick={() => setActiveTab('documents')}
+                style={{
+                  padding: '8px 12px',
+                  borderRadius: 8,
+                  border: '1px solid #222',
+                  background: activeTab === 'documents' ? '#90d6e9' : '#e5e7eb',
+                  color: '#111',
+                  fontWeight: 700,
+                  cursor: 'pointer'
+                }}
+              >
+                Uploads
+              </button>
+            </div>
+
+
+
             <h1>Welcome {firstName}</h1>
             <div style={{ fontSize: 12, color: '#6b7280' }}>
               {lastUpdated ? `Last saved: ${new Date(lastUpdated).toLocaleString()}` : 'Not saved yet'}
