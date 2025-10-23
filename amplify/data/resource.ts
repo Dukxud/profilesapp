@@ -16,6 +16,7 @@ const schema = a.schema({
       billingState: a.string(),
       billingZip: a.string(),
       billingCountry: a.string(),
+      identityId: a.string(),
     })
     .authorization((allow) => [allow.owner()]),
 });

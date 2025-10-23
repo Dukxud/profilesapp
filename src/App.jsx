@@ -4,6 +4,8 @@ import { Authenticator, View, Heading, TextField} from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
 import { generateClient } from 'aws-amplify/data';
 import { list, uploadData, getUrl } from 'aws-amplify/storage';
+import { fetchAuthSession } from 'aws-amplify/auth';
+
 
 
 const Req = ({ text }) => (
@@ -57,12 +59,6 @@ export default function App() {
     }
   }
   
-  useEffect(() => {
-    if (activeTab === 'documents') {
-      refreshUploads();
-    }
-  }, [activeTab]);
-
 
   async function loadLatest() {
     const opts = { authMode: 'userPool' };
@@ -398,6 +394,7 @@ export default function App() {
 
                       const nn = (s) => (s.trim() === '' ? null : s.trim());
 
+                      const { identityId } = await fetchAuthSession();
                       const payload = {
                         firstName: firstName.trim(),
                         lastName:  lastName.trim(),
@@ -410,6 +407,7 @@ export default function App() {
                         billingState:    nn(billingState),
                         billingZip:      nn(billingZip),
                         billingCountry:  nn(billingCountry),
+                        identityId,
                       };
 
                       const { data } = profileId
@@ -431,8 +429,7 @@ export default function App() {
 
                 <button
                   onClick={() => {
-                    // 1) In-memory state reset
-                    setActiveTab('profile');
+
 
                     // uploads tab state
                     setDocFile(null);
@@ -520,6 +517,13 @@ export default function App() {
                           data: docFile,
                           options: {
                             contentType: docFile.type || 'application/octet-stream',
+                            metadata: {
+                              userSub:   (user?.attributes?.sub ?? '').toString(),
+                              email:     (user?.attributes?.email ?? user?.signInDetails?.loginId ?? user?.username ?? '').toString(),
+                              profileId: (profileId ?? '').toString(),
+                              profileName: `${firstName || ''} ${lastName || ''}`.trim(),
+                            },
+
                             onProgress: ({ transferredBytes, totalBytes }) => {
                               if (!totalBytes) return;
                               const pct = Math.round((transferredBytes / totalBytes) * 100);
@@ -618,8 +622,7 @@ export default function App() {
 
                   <button
                     onClick={() => {
-                      // 1) In-memory state reset
-                      setActiveTab('profile');
+
 
                       // uploads tab state
                       setDocFile(null);
