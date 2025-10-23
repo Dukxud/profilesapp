@@ -29,6 +29,8 @@ export default function App() {
   const [profileId, setProfileId] = useState('');
   const [savedToast, setSavedToast] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState('');
+
 
 
 
@@ -59,6 +61,7 @@ export default function App() {
     setBillingState(latest.billingState ?? '');
     setBillingZip(latest.billingZip ?? '');
     setBillingCountry(latest.billingCountry ?? '');
+    setLastUpdated(latest.updatedAt || latest.createdAt || '');
   }
   
 
@@ -131,7 +134,9 @@ export default function App() {
               
             <AutoLoad user={user} />
             <h1>Welcome {firstName}</h1>
-            <div style={{ fontSize: 12, color: '#6b7280' }}>userId: {user?.attributes?.sub ?? user?.userId ?? user?.username}</div>
+            <div style={{ fontSize: 12, color: '#6b7280' }}>
+              {lastUpdated ? `Last saved: ${new Date(lastUpdated).toLocaleString()}` : 'Not saved yet'}
+            </div>
 
             <h2 style={{ marginTop: 24, marginBottom: 8 }}>Personal Information</h2>
 
@@ -302,6 +307,7 @@ export default function App() {
                       : await client.models.Profile.create(payload, { authMode: 'userPool' });
 
                     setProfileId(data.id);
+                    setLastUpdated(data?.updatedAt || data?.createdAt || new Date().toISOString());
                     await loadLatest();
                     setSavedToast(true);
                     setTimeout(() => setSavedToast(false), 3000);
@@ -313,23 +319,12 @@ export default function App() {
                 {saving ? 'Saving…' : 'Save profile'}
               </button>
 
-
-              <button
-                style={{ marginTop: 8 }}
-                onClick={async () => {
-                  const { data } = profileId ? await client.models.Profile.get({ id: profileId }, { authMode: 'userPool' })
-                  : { data: null };
-                }}
-              >
-                Debug: view backend profile
-              </button>
-
               <button
                 onClick={() => {
                   [
                     'profileOwner','profileId','firstName','lastName','email','phone','organization',
                     'billingAddress1','billingAddress2','billingCity','billingState','billingZip','billingCountry'
-                  ].forEach((k) => localStorage.removeItem(k)); // clear our app’s cache first
+                  ].forEach((k) => localStorage.removeItem(k));
                   signOut(); // then end the Cognito session
                 }}
 
