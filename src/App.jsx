@@ -35,6 +35,9 @@ export default function App() {
   const [docFile, setDocFile] = useState(null);
   const [uploads, setUploads] = useState([]);
   const [loadingUploads, setLoadingUploads] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [uploadPct, setUploadPct] = useState(0);
+
 
   async function refreshUploads() {
     try {
@@ -456,6 +459,54 @@ export default function App() {
                       Selected: {docFile.name} ({Math.ceil(docFile.size / 1024)} KB)
                     </div>
                   )}
+
+                  <button
+                    onClick={async () => {
+                      if (!docFile || uploading) return;
+
+                      setUploading(true);
+                      setUploadPct(0);
+                      try {
+                        const { result } = await uploadData({
+                          path: ({ identityId }) =>
+                            `uploads/${identityId}/${Date.now()}_${docFile.name}`, // unique per user
+                          data: docFile,
+                          options: {
+                            contentType: docFile.type || 'application/octet-stream',
+                            onProgress: ({ transferredBytes, totalBytes }) => {
+                              if (!totalBytes) return;
+                              const pct = Math.round((transferredBytes / totalBytes) * 100);
+                              setUploadPct(pct);
+                            },
+                          },
+                        });
+                        await result;                 // wait for the upload to finish
+                        setDocFile(null);             // clear picker
+                        setUploadPct(100);            // cap at 100 for the toast/UX
+                        await refreshUploads();       // show it in the list
+                      } catch (e) {
+                        console.error('Upload failed:', e);
+                        alert('Upload failed. Please try again.');
+                      } finally {
+                        setUploading(false);
+                        setTimeout(() => setUploadPct(0), 1200); // reset the meter after a moment
+                      }
+                    }}
+                    disabled={!docFile || uploading}
+                    style={{
+                      marginTop: 10,
+                      padding: '8px 12px',
+                      borderRadius: 8,
+                      border: '1px solid #222',
+                      background: !docFile || uploading ? '#e5e7eb' : '#90d6e9',
+                      color: '#111',
+                      fontWeight: 700,
+                      cursor: !docFile || uploading ? 'not-allowed' : 'pointer'
+                    }}
+                  >
+                    {uploading ? `Uploading… ${uploadPct}%` : 'Upload file'}
+                  </button>
+
 
                   <div style={{ fontSize: 12, color: '#6b7280', marginTop: 8 }}>
                     (We’ll wire this to S3 next sip—this just picks a file)
