@@ -415,15 +415,15 @@ export default function App() {
                   <h2 style={{ marginTop: 24, marginBottom: 8 }}>Uploads</h2>
 
                   <label style={{ display: 'block', width: 280 }}>
-                    <span style={{ display: 'block', marginBottom: 4 }}>
-                      Upload a file (PDF or image)
-                    </span>
-                    <input
-                      type="file"
-                      accept=".pdf,image/*"
-                      onChange={(e) => setDocFile(e.target.files?.[0] ?? null)}
-                      style={{ width: '100%' }}
-                    />
+                  <span style={{ display: 'block', marginBottom: 4 }}>
+                    Upload a file
+                  </span>
+                  <input
+                    type="file"
+                    onChange={(e) => setDocFile(e.target.files?.[0] ?? null)}
+                    style={{ width: '100%' }}
+                  />
+
                   </label>
 
                   {docFile && (
