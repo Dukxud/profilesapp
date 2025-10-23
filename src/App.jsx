@@ -102,6 +102,21 @@ export default function App() {
           if (!user) return;
           let cancelled = false;
         
+          // Landing reset: force Profile tab + clear any client-side caches
+          setActiveTab('profile');
+        
+          // uploads tab state
+          setDocFile(null);
+          setUploads([]);
+          setUploading(false);
+          setUploadPct(0);
+        
+          // hard wipe any lingering localStorage (belt & suspenders)
+          [
+            'profileOwner','profileId','firstName','lastName','email','phone','organization',
+            'billingAddress1','billingAddress2','billingCity','billingState','billingZip','billingCountry'
+          ].forEach((k) => localStorage.removeItem(k));
+        
           // On user change, clear in-memory fields (no localStorage)
           setProfileId('');
           setFirstName('');
@@ -416,25 +431,56 @@ export default function App() {
 
                 <button
                   onClick={() => {
+                    // 1) In-memory state reset
+                    setActiveTab('profile');
+
+                    // uploads tab state
+                    setDocFile(null);
+                    setUploads([]);
+                    setUploading(false);
+                    setUploadPct(0);
+
+                    // profile state
+                    setSavedToast(false);
+                    setSaving(false);
+                    setLastUpdated('');
+                    setProfileId('');
+                    setFirstName('');
+                    setLastName('');
+                    setEmail('');
+                    setPhone('');
+                    setCompany('');
+                    setBillingAddress1('');
+                    setBillingAddress2('');
+                    setBillingCity('');
+                    setBillingState('');
+                    setBillingZip('');
+                    setBillingCountry('');
+
+                    // 2) LocalStorage wipe (belt & suspenders)
                     [
                       'profileOwner','profileId','firstName','lastName','email','phone','organization',
                       'billingAddress1','billingAddress2','billingCity','billingState','billingZip','billingCountry'
                     ].forEach((k) => localStorage.removeItem(k));
-                    signOut(); // then end the Cognito session
-                  }}
 
+                    // 3) End Cognito session
+                    signOut();
+                  }}
                   style={{
-                    marginTop: 8, marginLeft: 8,
+                    marginTop: 8,
+                    marginLeft: 8,
                     padding: '10px 16px',
                     borderRadius: 10,
-                    border: '1px solid #6b7280',
+                    border: '1px solid #222',
                     background: '#90d6e9',
-                    color: '#6b7280',
+                    color: '#111',
                     fontWeight: 700,
                     cursor: 'pointer'
-                  }}>
-                  Sign out
+                  }}
+                >
+                Sign out
                 </button>
+
 
               </div>)}
 
@@ -566,31 +612,62 @@ export default function App() {
                       ))
                     )}
                     </ul>
-                    
+
                   </div>
 
 
                   <button
-                  onClick={() => {
-                    [
-                      'profileOwner','profileId','firstName','lastName','email','phone','organization',
-                      'billingAddress1','billingAddress2','billingCity','billingState','billingZip','billingCountry'
-                    ].forEach((k) => localStorage.removeItem(k));
-                    signOut(); // then end the Cognito session
-                  }}
+                    onClick={() => {
+                      // 1) In-memory state reset
+                      setActiveTab('profile');
 
-                  style={{
-                    marginTop: 8, marginLeft: 8,
-                    padding: '10px 16px',
-                    borderRadius: 10,
-                    border: '1px solid #6b7280',
-                    background: '#90d6e9',
-                    color: '#6b7280',
-                    fontWeight: 700,
-                    cursor: 'pointer'
-                  }}>
+                      // uploads tab state
+                      setDocFile(null);
+                      setUploads([]);
+                      setUploading(false);
+                      setUploadPct(0);
+
+                      // profile state
+                      setSavedToast(false);
+                      setSaving(false);
+                      setLastUpdated('');
+                      setProfileId('');
+                      setFirstName('');
+                      setLastName('');
+                      setEmail('');
+                      setPhone('');
+                      setCompany('');
+                      setBillingAddress1('');
+                      setBillingAddress2('');
+                      setBillingCity('');
+                      setBillingState('');
+                      setBillingZip('');
+                      setBillingCountry('');
+
+                      // 2) LocalStorage wipe (belt & suspenders)
+                      [
+                        'profileOwner','profileId','firstName','lastName','email','phone','organization',
+                        'billingAddress1','billingAddress2','billingCity','billingState','billingZip','billingCountry'
+                      ].forEach((k) => localStorage.removeItem(k));
+
+                      // 3) End Cognito session
+                      signOut();
+                    }}
+                    style={{
+                      marginTop: 8,
+                      marginLeft: 8,
+                      padding: '10px 16px',
+                      borderRadius: 10,
+                      border: '1px solid #222',
+                      background: '#90d6e9',
+                      color: '#111',
+                      fontWeight: 700,
+                      cursor: 'pointer'
+                    }}
+                  >
                   Sign out
                   </button>
+
                 </div>
               )}
 
