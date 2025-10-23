@@ -153,6 +153,13 @@ export default function App() {
           Header() {
             return (
               <View textAlign="center" padding="medium">
+                <img
+                  src="/company.png"
+                  alt="AIVault"
+                  width={64}
+                  height={64}
+                  style={{ display: 'block', margin: '0 auto 6px' }}
+                />
                 <Heading level={3} marginTop="0.25rem">
                   Project: SPARTA
                 </Heading>
