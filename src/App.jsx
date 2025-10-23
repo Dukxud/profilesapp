@@ -192,7 +192,7 @@ export default function App() {
                 marginTop: 4,
               }}
             >
-              <img src="/company.png" alt="AIVault" width={48} height={48} />
+              <img src="/company.png" alt="AIVault" width={96} height={96} />
               <h1 style={{ margin: 0 }}>Welcome {firstName}</h1>
             </div>
 
