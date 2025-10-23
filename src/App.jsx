@@ -3,7 +3,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { Authenticator, View, Heading, TextField} from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
 import { generateClient } from 'aws-amplify/data';
-import { list } from 'aws-amplify/storage';
+import { list, uploadData } from 'aws-amplify/storage';
 
 const Req = ({ text }) => (
   <span>
@@ -460,6 +460,36 @@ export default function App() {
                   <div style={{ fontSize: 12, color: '#6b7280', marginTop: 8 }}>
                     (We’ll wire this to S3 next sip—this just picks a file)
                   </div>
+
+                  <div style={{ marginTop: 12 }}>
+                    <button
+                      onClick={refreshUploads}
+                      disabled={loadingUploads}
+                      style={{
+                        padding: '6px 10px',
+                        borderRadius: 8,
+                        border: '1px solid #222',
+                        background: '#f4f4f5',
+                        cursor: loadingUploads ? 'not-allowed' : 'pointer',
+                        fontWeight: 600
+                      }}
+                    >
+                      {loadingUploads ? 'Refreshing…' : 'Refresh list'}
+                    </button>
+
+                    <ul style={{ marginTop: 8, maxHeight: 180, overflowY: 'auto', paddingLeft: 16 }}>
+                      {uploads.length === 0 ? (
+                        <li style={{ color: '#6b7280' }}>No uploads yet.</li>
+                      ) : (
+                        uploads.map((item) => (
+                          <li key={item.path}>
+                            {item.path.split('/').pop()} — {item.size ?? 0} bytes
+                          </li>
+                        ))
+                      )}
+                    </ul>
+                  </div>
+
 
                   <button
                   onClick={() => {
