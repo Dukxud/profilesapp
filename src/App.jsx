@@ -256,7 +256,7 @@ export default function App() {
                 >
                   Saved ✓
                 </div>
-              )}
+            )}
 
               <button
                 style={{
@@ -269,10 +269,10 @@ export default function App() {
                   fontWeight: 700,
                   cursor: canSave ? 'pointer' : 'not-allowed'
                 }}
-                disabled={!canSave || saving}                 {/* <— add saving */}
+                disabled={!canSave || saving}
                 onClick={async () => {
-                  if (saving) return;                         // <— guard
-                  setSaving(true);                            // <— toggle on
+                  if (saving) return;        
+                  setSaving(true);           
                   try {
                     const cognitoEmail = (
                       user?.attributes?.email ??
@@ -313,50 +313,6 @@ export default function App() {
                 {saving ? 'Saving…' : 'Save profile'}
               </button>
 
-
-
-              {/* <button style={{ marginTop: 8 }} onClick={async () => {
-              const { data: profiles } = await client.models.Profile.list(); const p = profiles?.at(-1); if (!p) return;
-              setProfileId(p.id);
-              setFirstName(p.firstName ?? '');
-              setLastName(p.lastName ?? '');
-              setEmail(p.email ?? '');
-              setPhone(p.phone ?? '');
-              setCompany(p.organization ?? '');
-              setBillingAddress1(p.billingAddress1 ?? '');
-              setBillingAddress2(p.billingAddress2 ?? '');
-              setBillingCity(p.billingCity ?? '');
-              setBillingState(p.billingState ?? '');
-              setBillingZip(p.billingZip ?? '');
-              setBillingCountry(p.billingCountry ?? '');
-            }}
-            >Load from backend</button> */}
-
-              {/* <button
-              style={{ marginTop: 8 }}
-              onClick={async () => {
-                alert('clicked');
-                const listFn = client?.models?.Profile?.list;
-                if (!listFn) { alert('Profile.list is undefined — outputs/model not available'); return; }
-                try {
-                  const { data } = await listFn({ authMode: 'userPool' });
-                  console.log('Profiles:', data);
-                  alert(`Profiles in backend: ${data.length}`);
-                } catch (e) {
-                  console.error(e);
-                  alert('Error: ' + (e?.errors?.[0]?.message || e.message || 'unknown'));
-                }
-              }}
-            >
-              Debug: count profiles
-            </button> */}
-
-              {/* <button
-              style={{ marginTop: 8 }}
-              onClick={() => alert('models: ' + (Object.keys(client?.models || {}).join(', ') || 'none'))}
-            >
-              Debug: models
-            </button> */}
 
               <button
                 style={{ marginTop: 8 }}
