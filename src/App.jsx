@@ -81,7 +81,7 @@ export default function App() {
           setBillingState('');
           setBillingZip('');
           setBillingCountry('');
-          setEmail('');
+          setEmail(user?.attributes?.email ?? user?.signInDetails?.loginId ?? user?.username ?? '');
         
           (async () => {
             try {
@@ -92,7 +92,7 @@ export default function App() {
           })();
         
           return () => { cancelled = true; };
-        }, [user?.attributes?.sub]);
+        }, [user?.attributes?.sub, user?.userId, user?.username]);
         
         return null;
       },
