@@ -613,63 +613,63 @@ export default function App() {
                       )}
                     </ul>
 
-                  <button
-                    onClick={() => {
 
-
-                      // uploads tab state
-                      setDocFile(null);
-                      setUploads([]);
-                      setUploading(false);
-                      setUploadPct(0);
-
-                      // profile state
-                      setSavedToast(false);
-                      setSaving(false);
-                      setLastUpdated('');
-                      setProfileId('');
-                      setFirstName('');
-                      setLastName('');
-                      setEmail('');
-                      setPhone('');
-                      setCompany('');
-                      setBillingAddress1('');
-                      setBillingAddress2('');
-                      setBillingCity('');
-                      setBillingState('');
-                      setBillingZip('');
-                      setBillingCountry('');
-
-                      // 2) LocalStorage wipe (belt & suspenders)
-                      [
-                        'profileOwner','profileId','firstName','lastName','email','phone','organization',
-                        'billingAddress1','billingAddress2','billingCity','billingState','billingZip','billingCountry'
-                      ].forEach((k) => localStorage.removeItem(k));
-
-                      // 3) End Cognito session
-                      signOut();
-                    }}
-                    style={{
-                      marginTop: 8,
-                      marginLeft: 8,
-                      padding: '10px 16px',
-                      borderRadius: 10,
-                      border: '1px solid #222',
-                      background: '#90d6e9',
-                      color: '#111',
-                      fontWeight: 700,
-                      cursor: 'pointer'
-                    }}
-                    
-                  >
-                  Sign out
-                  </button>
 
                 </div>
               </div>
               )}
+      
+      <button
+        onClick={() => {
 
 
+          // uploads tab state
+          setDocFile(null);
+          setUploads([]);
+          setUploading(false);
+          setUploadPct(0);
+
+          // profile state
+          setSavedToast(false);
+          setSaving(false);
+          setLastUpdated('');
+          setProfileId('');
+          setFirstName('');
+          setLastName('');
+          setEmail('');
+          setPhone('');
+          setCompany('');
+          setBillingAddress1('');
+          setBillingAddress2('');
+          setBillingCity('');
+          setBillingState('');
+          setBillingZip('');
+          setBillingCountry('');
+
+          // 2) LocalStorage wipe (belt & suspenders)
+          [
+            'profileOwner','profileId','firstName','lastName','email','phone','organization',
+            'billingAddress1','billingAddress2','billingCity','billingState','billingZip','billingCountry'
+          ].forEach((k) => localStorage.removeItem(k));
+
+          // 3) End Cognito session
+          signOut();
+        }}
+        style={{
+          marginTop: 8,
+          marginLeft: 8,
+          padding: '10px 16px',
+          borderRadius: 10,
+          border: '1px solid #222',
+          background: '#90d6e9',
+          color: '#111',
+          fontWeight: 700,
+          cursor: 'pointer'
+        }}
+        
+      >
+      Sign out
+      </button>
 
 
             </main>
