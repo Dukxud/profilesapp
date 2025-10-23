@@ -15,43 +15,50 @@ const Req = ({ text }) => (
 export default function App() {
   const client = generateClient();
 
-  const [firstName, setFirstName] = useState(() => localStorage.getItem('firstName') || '');
-  const [lastName, setLastName] = useState(() => localStorage.getItem('lastName') || '');
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState(() => localStorage.getItem('phone') || '');
-  const [organization, setCompany] = useState(() => localStorage.getItem('organization') || '');
-  const [billingAddress1, setBillingAddress1] = useState(() => localStorage.getItem('billingAddress1') || '');
-  const [billingAddress2, setBillingAddress2] = useState(() => localStorage.getItem('billingAddress2') || '');
-  const [billingCity, setBillingCity] = useState(() => localStorage.getItem('billingCity') || '');
-  const [billingState, setBillingState] = useState(() => localStorage.getItem('billingState') || '');
-  const [billingZip, setBillingZip] = useState(() => localStorage.getItem('billingZip') || '');
-  const [billingCountry, setBillingCountry] = useState(() => localStorage.getItem('billingCountry') || '');
-  const [profileId, setProfileId] = useState(() => localStorage.getItem('profileId') || '');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName]   = useState('');
+  const [email, setEmail]         = useState('');
+  const [phone, setPhone]         = useState('');
+  const [organization, setCompany] = useState('');
+  const [billingAddress1, setBillingAddress1] = useState('');
+  const [billingAddress2, setBillingAddress2] = useState('');
+  const [billingCity, setBillingCity]         = useState('');
+  const [billingState, setBillingState]       = useState('');
+  const [billingZip, setBillingZip]           = useState('');
+  const [billingCountry, setBillingCountry]   = useState('');
+  const [profileId, setProfileId] = useState('');
   const [savedToast, setSavedToast] = useState(false);
+  const [saving, setSaving] = useState(false);
+
 
 
   async function loadLatest() {
-    if (!profileId) {
-      // No known profile for this browser/user yet → nothing to load
-      return;
-    }
-    const { data: p } = await client.models.Profile.get(
-      { id: profileId },
-      { authMode: 'userPool' }
-    );
-    if (!p) return;
+    const opts = { authMode: 'userPool' };
   
-    setProfileId(p.id);
-    setFirstName(p.firstName ?? '');
-    setLastName(p.lastName ?? '');
-    setPhone(p.phone ?? '');
-    setCompany(p.organization ?? '');
-    setBillingAddress1(p.billingAddress1 ?? '');
-    setBillingAddress2(p.billingAddress2 ?? '');
-    setBillingCity(p.billingCity ?? '');
-    setBillingState(p.billingState ?? '');
-    setBillingZip(p.billingZip ?? '');
-    setBillingCountry(p.billingCountry ?? '');
+    // Owner-scoped: returns ONLY the current user's profiles
+    const { data } = await client.models.Profile.list(opts);
+    if (!data || data.length === 0) {
+      setProfileId('');
+      return; // nothing saved yet
+    }
+  
+    // Pick the most recently updated (fallback to createdAt)
+    const latest = [...data].sort(
+      (a, b) =>
+        new Date(b.updatedAt || b.createdAt) - new Date(a.updatedAt || a.createdAt)
+    )[0];
+  
+    setProfileId(latest.id);
+    setFirstName(latest.firstName ?? '');
+    setLastName(latest.lastName ?? '');
+    setPhone(latest.phone ?? '');
+    setCompany(latest.organization ?? '');
+    setBillingAddress1(latest.billingAddress1 ?? '');
+    setBillingAddress2(latest.billingAddress2 ?? '');
+    setBillingCity(latest.billingCity ?? '');
+    setBillingState(latest.billingState ?? '');
+    setBillingZip(latest.billingZip ?? '');
+    setBillingCountry(latest.billingCountry ?? '');
   }
   
 
@@ -61,47 +68,32 @@ export default function App() {
         useEffect(() => {
           if (!user) return;
           let cancelled = false;
-
-          const currentOwner = String(user?.attributes?.sub || '');
-          const storedOwner  = String(localStorage.getItem('profileOwner') || '');
-          
-          // If different OR missing, clear any carried-over profile/data
-          if (storedOwner !== currentOwner) {
-            [
-              'profileId','firstName','lastName','email','phone','organization',
-              'billingAddress1','billingAddress2','billingCity','billingState',
-              'billingZip','billingCountry'
-            ].forEach((k) => localStorage.removeItem(k));
-            setProfileId('');
-            setFirstName('');
-            setLastName('');
-            setPhone('');
-            setCompany('');
-            setBillingAddress1('');
-            setBillingAddress2('');
-            setBillingCity('');
-            setBillingState('');
-            setBillingZip('');
-            setBillingCountry('');
-            setEmail('');
-          }
-          
-          // Always write the current owner after the check
-          localStorage.setItem('profileOwner', currentOwner);
-          
-
+        
+          // On user change, clear in-memory fields (no localStorage)
+          setProfileId('');
+          setFirstName('');
+          setLastName('');
+          setPhone('');
+          setCompany('');
+          setBillingAddress1('');
+          setBillingAddress2('');
+          setBillingCity('');
+          setBillingState('');
+          setBillingZip('');
+          setBillingCountry('');
+          setEmail('');
+        
           (async () => {
             try {
-              if (!cancelled) await loadLatest();
+              if (!cancelled) await loadLatest(); // loads ONLY this user's rows
             } catch (e) {
               console.error('auto-load profile failed', e);
             }
           })();
-          
-          return () => {
-            cancelled = true;
-          };
+        
+          return () => { cancelled = true; };
         }, [user?.attributes?.sub]);
+        
         return null;
       },
     []
@@ -254,7 +246,7 @@ export default function App() {
                     position: 'fixed',
                     right: 16,
                     bottom: 16,
-                    background: '#10b981',       // green
+                    background: '#10b981',
                     color: 'white',
                     padding: '10px 14px',
                     borderRadius: 12,
@@ -265,7 +257,6 @@ export default function App() {
                   Saved ✓
                 </div>
               )}
-
 
               <button
                 style={{
@@ -278,75 +269,51 @@ export default function App() {
                   fontWeight: 700,
                   cursor: canSave ? 'pointer' : 'not-allowed'
                 }}
-                disabled={!canSave}
-
+                disabled={!canSave || saving}                 {/* <— add saving */}
                 onClick={async () => {
-                  localStorage.setItem('firstName', firstName.trim());
-                  localStorage.setItem('lastName', lastName.trim());
-                  localStorage.setItem('phone', phone.trim());
-                  localStorage.setItem('billingAddress1', billingAddress1.trim());
-                  localStorage.setItem('billingCity', billingCity.trim());
-                  localStorage.setItem('billingState', billingState.trim());
-                  localStorage.setItem('billingZip', billingZip.trim());
-                  localStorage.setItem('billingCountry', billingCountry.trim());
+                  if (saving) return;                         // <— guard
+                  setSaving(true);                            // <— toggle on
+                  try {
+                    const cognitoEmail = (
+                      user?.attributes?.email ??
+                      user?.signInDetails?.loginId ??
+                      user?.username ??
+                      email
+                    ).toString().trim();
 
-                  localStorage.setItem('email', 
-                    (user?.attributes?.email ?? user?.signInDetails?.loginId ?? user?.username ?? '').toString().trim()
-                  );
+                    const nn = (s) => (s.trim() === '' ? null : s.trim());
 
-                  if (organization.trim()) {
-                    localStorage.setItem('organization', organization.trim());
-                  } else {
-                    localStorage.removeItem('organization');
+                    const payload = {
+                      firstName: firstName.trim(),
+                      lastName:  lastName.trim(),
+                      email:     cognitoEmail,
+                      phone:     phone.trim(),
+                      organization:   nn(organization),
+                      billingAddress1: nn(billingAddress1),
+                      billingAddress2: nn(billingAddress2),
+                      billingCity:     nn(billingCity),
+                      billingState:    nn(billingState),
+                      billingZip:      nn(billingZip),
+                      billingCountry:  nn(billingCountry),
+                    };
+
+                    const { data } = profileId
+                      ? await client.models.Profile.update({ id: profileId, ...payload }, { authMode: 'userPool' })
+                      : await client.models.Profile.create(payload, { authMode: 'userPool' });
+
+                    setProfileId(data.id);
+                    await loadLatest();
+                    setSavedToast(true);
+                    setTimeout(() => setSavedToast(false), 3000);
+                  } finally {
+                    setSaving(false);
                   }
-
-                  if (billingAddress2.trim()) {
-                    localStorage.setItem('billingAddress2', billingAddress2.trim());
-                  } else {
-                    localStorage.removeItem('billingAddress2');
-                  }
-
-                  // replace your current upsert line with this block
-                  const cognitoEmail = (
-                    user?.attributes?.email ??
-                    user?.signInDetails?.loginId ??
-                    user?.username ??
-                    email
-                  ).toString().trim();
-
-                  // empty → null (clears in DB)
-                  const nn = (s) => (s.trim() === '' ? null : s.trim());
-
-                  const payload = {
-                    firstName: firstName.trim(),
-                    lastName: lastName.trim(),
-                    email: cognitoEmail,
-                    phone: phone.trim(),
-                    organization: nn(organization),
-                    billingAddress1: nn(billingAddress1),
-                    billingAddress2: nn(billingAddress2),
-                    billingCity: nn(billingCity),
-                    billingState: nn(billingState),
-                    billingZip: nn(billingZip),
-                    billingCountry: nn(billingCountry),
-                  };
-
-                  const { data } = profileId
-                    ? await client.models.Profile.update({ id: profileId, ...payload }, { authMode: 'userPool' })
-                    : await client.models.Profile.create(payload, { authMode: 'userPool' });
-
-                  setProfileId(data.id);
-                  localStorage.setItem('profileId', data.id);
-                  localStorage.setItem('profileOwner', String(user?.attributes?.sub || ''));
-                  
-                  await loadLatest();
-                  setSavedToast(true);
-                  setTimeout(() => setSavedToast(false), 3000);
-
                 }}
               >
-                Save profile
+                {saving ? 'Saving…' : 'Save profile'}
               </button>
+
+
 
               {/* <button style={{ marginTop: 8 }} onClick={async () => {
               const { data: profiles } = await client.models.Profile.list(); const p = profiles?.at(-1); if (!p) return;
