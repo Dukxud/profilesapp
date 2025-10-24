@@ -3,10 +3,9 @@ import {
   MarketplaceMeteringClient,
   ResolveCustomerCommand,
 } from '@aws-sdk/client-marketplace-metering';
-import { env } from 'process';
 
 const mmClient = new MarketplaceMeteringClient({
-    region: env.AWS_REGION ?? env.AWS_DEFAULT_REGION ?? 'us-east-2',
+    region: process.env.AWS_REGION ?? process.env.AWS_DEFAULT_REGION ?? 'us-east-2',
   });
 
 export const handler: APIGatewayProxyHandlerV2 = async (event) => {
