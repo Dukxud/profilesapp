@@ -58,7 +58,7 @@ export default function App() {
       setLoadingUploads(true);
       const { items } = await list({
         // This scopes to the signed-in user’s folder:
-        path: ({ identityId }) => `private/${identityId}/`,
+        path: ({ identityId }) => `uploads/${identityId}/`,
         options: { pageSize: 50 },
       });
       setUploads(items ?? []);
