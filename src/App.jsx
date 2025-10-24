@@ -5,6 +5,7 @@ import '@aws-amplify/ui-react/styles.css';
 import { generateClient } from 'aws-amplify/data';
 import { list, uploadData, getUrl } from 'aws-amplify/storage';
 import { fetchAuthSession } from 'aws-amplify/auth';
+import outputs from './amplify_outputs.json';
 
 
 
@@ -18,7 +19,17 @@ const Req = ({ text }) => (
 
 export default function App() {
   const client = generateClient();
+  
+  // Joins the API base from amplify_outputs with our route
+  const REG_URL = `${(
+    outputs.custom?.API?.marketplaceApi?.endpoint ??
+    outputs.API?.marketplaceApi?.endpoint ??
+    ''
+  ).replace(/\/$/, '')}/marketplace/register`;
 
+
+  const [isMarketplaceLinked, setIsMarketplaceLinked] = useState(false);
+  const [marketProduct, setMarketProduct] = useState('');  
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName]   = useState('');
   const [email, setEmail]         = useState('');
@@ -61,12 +72,77 @@ export default function App() {
   
   // Auto-load the user's uploads when the Uploads tab is selected
   useEffect(() => {
-    if (activeTab === 'documents') {
+    if (activeTab === 'uploads') {
       refreshUploads();
     }
   }, [activeTab]);
 
+  useEffect(() => {
+    // Only run if we have an API endpoint
+    if (!REG_URL) return;
+  
+    // Look for token in the URL (Marketplace adds this)
+    const url = new URL(window.location.href);
+    const token =
+      url.searchParams.get('x-amzn-marketplace-token') ||
+      url.searchParams.get('token');
+  
+    if (!token) return;
+  
+    (async () => {
+      try {
+        // Call our registration endpoint with the token in a header
+        const res = await fetch(REG_URL, {
+          headers: { 'x-amzn-marketplace-token': token },
+        });
+        const json = await res.json();
+  
+        if (json?.ok && json.customerIdentifier && json.productCode) {
+          // Write the linkage onto this user's Profile (if we already have an id)
+          if (profileId) {
+            await client.models.Profile.update(
+              {
+                id: profileId,
+                marketplaceCustomerId: json.customerIdentifier,
+                marketplaceProductCode: json.productCode,
+                marketplaceLinkedAt: new Date().toISOString(),
+              },
+              { authMode: 'userPool' }
+            );
 
+            // reflect immediately in UI
+           setIsMarketplaceLinked(true);
+           setMarketProduct(json.productCode || '');
+           await loadLatest();
+
+          } else {
+            // No profile yet — stash for later save
+            localStorage.setItem(
+              'pendingMarketplaceLink',
+              JSON.stringify({
+                customerIdentifier: json.customerIdentifier,
+                productCode: json.productCode,
+                linkedAt: new Date().toISOString(),
+              })
+            );
+
+          }
+          console.log('Marketplace linked:', json);
+        } else {
+          console.warn('Marketplace link failed:', json);
+        }
+      } catch (e) {
+        console.error('Registration call failed:', e);
+      } finally {
+        // Clean the URL so refreshes don’t re-run linking
+        url.searchParams.delete('x-amzn-marketplace-token');
+        url.searchParams.delete('token');
+        window.history.replaceState({}, '', url);
+      }
+    })();
+    // Re-run if we learn the profile id later in the session
+  }, [profileId]);
+  
 
   async function loadLatest() {
     const opts = { authMode: 'userPool' };
@@ -95,6 +171,8 @@ export default function App() {
     setBillingState(latest.billingState ?? '');
     setBillingZip(latest.billingZip ?? '');
     setBillingCountry(latest.billingCountry ?? '');
+    setIsMarketplaceLinked(!!latest.marketplaceCustomerId);
+    setMarketProduct(latest.marketplaceProductCode ?? '');
     setLastUpdated(latest.updatedAt || latest.createdAt || '');
   }
   
@@ -220,12 +298,12 @@ export default function App() {
 
               <button
                 role="tab"
-                aria-selected={activeTab === 'documents'}
-                onClick={() => setActiveTab('documents')}
+                aria-selected={activeTab === 'uploads'}
+                onClick={() => setActiveTab('uploads')}
                 style={{
                   padding: '8px 16px',
                   fontWeight: 700,
-                  background: activeTab === 'documents' ? '#90d6e9' : '#f4f4f5',
+                  background: activeTab === 'uploads' ? '#90d6e9' : '#f4f4f5',
                   color: '#111',
                   cursor: 'pointer',
                   borderLeft: '1px solid #222',   // divider inside the bar
@@ -258,6 +336,25 @@ export default function App() {
               <div style={{ fontSize: 12, color: '#6b7280' }}>
                 {lastUpdated ? `Last saved: ${new Date(lastUpdated).toLocaleString()}` : 'Not saved yet'}
               </div>
+
+              {isMarketplaceLinked && (
+              <div
+                style={{
+                  display: 'inline-block',
+                  marginTop: 6,
+                  padding: '4px 8px',
+                  borderRadius: 9999,
+                  background: '#ecfeff',
+                  border: '1px solid #0891b2',
+                  color: '#0e7490',
+                  fontSize: 12,
+                  fontWeight: 700
+                }}
+              >
+                AWS Marketplace linked {marketProduct ? `(${marketProduct})` : ''}
+              </div>
+              )}
+
 
               <h2 style={{ marginTop: 24, marginBottom: 8 }}>Personal Information</h2>
 
@@ -292,7 +389,6 @@ export default function App() {
                 placeholder="e.g., JohnDoe@gmail.com"
                 width="280px"
                 value={user?.attributes?.email ?? user?.signInDetails?.loginId ?? user?.username ?? email}
-                onChange={(e) => setEmail(e.target.value)}
                 isRequired
                 isReadOnly
               />
@@ -396,9 +492,10 @@ export default function App() {
                     cursor: canSave ? 'pointer' : 'not-allowed'
                   }}
                   disabled={!canSave || saving}
+
                   onClick={async () => {
-                    if (saving) return;        
-                    setSaving(true);           
+                    if (saving) return;
+                    setSaving(true);
                     try {
                       const cognitoEmail = (
                         user?.attributes?.email ??
@@ -406,10 +503,10 @@ export default function App() {
                         user?.username ??
                         email
                       ).toString().trim();
-
+                  
                       const nn = (s) => (s.trim() === '' ? null : s.trim());
-
                       const { identityId } = await fetchAuthSession();
+                  
                       const payload = {
                         firstName: firstName.trim(),
                         lastName:  lastName.trim(),
@@ -424,13 +521,49 @@ export default function App() {
                         billingCountry:  nn(billingCountry),
                         identityId,
                       };
+                  
+                      // NEW: only on first create, merge any pending Marketplace link
+                      let marketplacePatch = {};
+                      const raw = localStorage.getItem('pendingMarketplaceLink');
+                      if (!profileId && raw) {
+                        try {
+                          const { customerIdentifier, productCode, linkedAt } = JSON.parse(raw);
+                          if (customerIdentifier && productCode) {
+                            marketplacePatch = {
+                              marketplaceCustomerId: customerIdentifier,
+                              marketplaceProductCode: productCode,
+                              marketplaceLinkedAt: linkedAt || new Date().toISOString(),
+                            };
 
+                          }
+                        } catch {
+                          /* ignore malformed localStorage */
+                        }
+                      }
+                  
                       const { data } = profileId
-                        ? await client.models.Profile.update({ id: profileId, ...payload }, { authMode: 'userPool' })
-                        : await client.models.Profile.create(payload, { authMode: 'userPool' });
+                        ? await client.models.Profile.update(
+                            { id: profileId, ...payload },
+                            { authMode: 'userPool' }
+                          )
+                        : await client.models.Profile.create(
+                            { ...payload, ...marketplacePatch },
+                            { authMode: 'userPool' }
+                          );
+                  
+                      // keep pill in sync with the saved record
+                      setIsMarketplaceLinked(!!data.marketplaceCustomerId);
+                      setMarketProduct(data.marketplaceProductCode ?? '');
 
+                      // Clear the pending link after a successful first save
+                      if (!profileId && marketplacePatch.marketplaceCustomerId) {
+                        localStorage.removeItem('pendingMarketplaceLink');
+                      }
+                  
                       setProfileId(data.id);
-                      setLastUpdated(data?.updatedAt || data?.createdAt || new Date().toISOString());
+                      setLastUpdated(
+                        data?.updatedAt || data?.createdAt || new Date().toISOString()
+                      );
                       await loadLatest();
                       setSavedToast(true);
                       setTimeout(() => setSavedToast(false), 3000);
@@ -497,7 +630,7 @@ export default function App() {
               </div>)}
 
 
-              {activeTab === 'documents' && (
+              {activeTab === 'uploads' && (
                 <div>
                   <h2 style={{ marginTop: 24, marginBottom: 8 }}>Uploads</h2>
 
