@@ -58,7 +58,7 @@ export default function App() {
       setLoadingUploads(true);
       const { items } = await list({
         // This scopes to the signed-in user’s folder:
-        path: ({ identityId }) => `uploads/${identityId}/`,
+        path: ({ identityId }) => `private/${identityId}/uploads/`,
         options: { pageSize: 50 },
       });
       setUploads(items ?? []);
@@ -658,7 +658,7 @@ export default function App() {
                       try {
                         const { result } = await uploadData({
                           path: ({ identityId }) =>
-                            `uploads/${identityId}/${Date.now()}_${docFile.name}`, // unique per user
+                            `private/${identityId}/uploads/${Date.now()}_${docFile.name}`, // unique per user
                           data: docFile,
                           options: {
                             contentType: docFile.type || 'application/octet-stream',
