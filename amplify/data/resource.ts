@@ -17,6 +17,14 @@ const schema = a.schema({
       billingZip: a.string(),
       billingCountry: a.string(),
       identityId: a.string(),
+
+      // marketplace info
+      marketplaceCustomerId: a.string(),   // from ResolveCustomer
+      marketplaceProductCode: a.string(),  // your Marketplace product code (handy for future)
+      plan: a.string(),                    // negotiated plan name/label
+      entitled: a.boolean(),               // true once Marketplace shows active entitlement
+      contractEndAt: a.datetime(),         // optional: when the contract ends (for UI)
+
     })
     .authorization((allow) => [allow.owner()]),
 });

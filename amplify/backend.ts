@@ -10,4 +10,5 @@ export const backend = defineBackend({
   auth,
   data,
   storage,
+  api, 
 });
