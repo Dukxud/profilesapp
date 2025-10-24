@@ -658,7 +658,7 @@ export default function App() {
                       try {
                         const { result } = await uploadData({
                           path: ({ identityId }) =>
-                            `private/${identityId}/${Date.now()}_${docFile.name}`, // unique per user
+                            `uploads/${identityId}/${Date.now()}_${docFile.name}`, // unique per user
                           data: docFile,
                           options: {
                             contentType: docFile.type || 'application/octet-stream',
