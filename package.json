@@ -13,7 +13,8 @@
     "@aws-amplify/ui-react": "^6.12.0",
     "aws-amplify": "^6.15.5",
     "react": "^19.1.1",
-    "react-dom": "^19.1.1"
+    "react-dom": "^19.1.1",
+    "@aws-sdk/client-marketplace-metering": "^3.645.0"
   },
   "devDependencies": {
     "@aws-amplify/backend": "^1.16.1",
