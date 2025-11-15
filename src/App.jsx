@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Authenticator, View, Heading } from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
 import { generateClient } from 'aws-amplify/data';
-import outputs from './amplify_outputs.json';
+import outputs from './amplifyOutputs';
 import { useProfileForm } from './hooks/useProfileForm';
 import { useMarketplaceLink } from './hooks/useMarketplaceLink';
 import { useUploads } from './hooks/useUploads';
