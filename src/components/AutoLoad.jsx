@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect } from 'react';
 
 const LOCAL_STORAGE_KEYS = [
   'profileOwner',
@@ -17,38 +17,17 @@ const LOCAL_STORAGE_KEYS = [
 ];
 
 export function AutoLoad({ user, onReset, onLoad }) {
-  const resetRef = useRef(onReset);
-  const loadRef = useRef(onLoad);
-  const identityKey = useMemo(() => {
-    if (!user) return '';
-    const rawId =
-      user?.userId ??
-      user?.attributes?.sub ??
-      user?.username ??
-      user?.signInDetails?.loginId ??
-      '';
-    return rawId ? rawId.toString() : '';
-  }, [user]);
-
   useEffect(() => {
-    resetRef.current = onReset;
-  }, [onReset]);
-
-  useEffect(() => {
-    loadRef.current = onLoad;
-  }, [onLoad]);
-
-  useEffect(() => {
-    if (!identityKey) return undefined;
+    if (!user) return;
     let cancelled = false;
 
-    resetRef.current?.({ user });
+    onReset?.({ user });
     LOCAL_STORAGE_KEYS.forEach((key) => localStorage.removeItem(key));
 
     (async () => {
       try {
         if (!cancelled) {
-          await loadRef.current?.();
+          await onLoad?.();
         }
       } catch (error) {
         console.error('auto-load profile failed', error);
@@ -58,7 +37,7 @@ export function AutoLoad({ user, onReset, onLoad }) {
     return () => {
       cancelled = true;
     };
-  }, [identityKey, user]);
+  }, [user?.attributes?.sub, user?.userId, user?.username, onLoad, onReset]);
 
   return null;
 }
