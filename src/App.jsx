@@ -1,5 +1,5 @@
 // src/App.jsx
-import { useState, useEffect} from 'react';
+import { useState, useEffect } from 'react';
 import { Authenticator, View, Heading } from '@aws-amplify/ui-react';
 import ProfileTab from './ProfileTab';
 import UploadsTab from './UploadsTab';
@@ -7,13 +7,6 @@ import '@aws-amplify/ui-react/styles.css';
 import { generateClient } from 'aws-amplify/data';
 import { list, uploadData, getUrl } from 'aws-amplify/storage';
 import { fetchAuthSession } from 'aws-amplify/auth';
-
-const Req = ({ text }) => (
-  <span>
-    {text}
-    <span style={{ color: '#dc2626' }}> *</span>
-  </span>
-);
 
 export default function App() {
   const client = generateClient();
@@ -213,11 +206,11 @@ export default function App() {
         {({ user, signOut }) => {
           const canSave = Boolean(
             firstName.trim() &&
-              lastName.trim() &&
-              phone.trim() &&
-              (user?.attributes?.email ??
-                user?.signInDetails?.loginId ??
-                user?.username)
+            lastName.trim() &&
+            phone.trim() &&
+            (user?.attributes?.email ??
+              user?.signInDetails?.loginId ??
+              user?.username)
           );
 
           const handleSignOut = () => {
@@ -298,13 +291,13 @@ export default function App() {
 
               const { data } = profileId
                 ? await client.models.Profile.update(
-                    { id: profileId, ...payload },
-                    { authMode: 'userPool' }
-                  )
+                  { id: profileId, ...payload },
+                  { authMode: 'userPool' }
+                )
                 : await client.models.Profile.create(
-                    { ...payload },
-                    { authMode: 'userPool' }
-                  );
+                  { ...payload },
+                  { authMode: 'userPool' }
+                );
 
               setProfileId(data.id);
               setLastUpdated(
@@ -334,14 +327,15 @@ export default function App() {
             <main className="app-authed">
               <AutoLoad user={user} onUserChange={handleUserChange} />
 
-              <div
+              <nav
                 role="tablist"
                 aria-label="Profile sections"
                 style={{
-                  display: 'inline-flex',
-                  border: '1px solid #222',
-                  borderRadius: 9999,
-                  overflow: 'hidden',
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                  gap: 8,
+                  borderBottom: '1px solid #e5e7eb',
+                  paddingBottom: 4,
                   marginBottom: 12,
                 }}
               >
@@ -350,14 +344,16 @@ export default function App() {
                   aria-selected={activeTab === 'profile'}
                   onClick={() => setActiveTab('profile')}
                   style={{
-                    padding: '8px 16px',
-                    fontWeight: 700,
-                    background:
-                      activeTab === 'profile' ? '#90d6e9' : '#f4f4f5',
-                    color: '#111',
-                    cursor: 'pointer',
+                    padding: '6px 10px',
+                    fontWeight: 600,
+                    background: 'transparent',
                     border: 'none',
-                    outline: 'none',
+                    borderBottom:
+                      activeTab === 'profile'
+                        ? '2px solid #0f766e'
+                        : '2px solid transparent',
+                    color: activeTab === 'profile' ? '#0f172a' : '#6b7280',
+                    cursor: 'pointer',
                   }}
                 >
                   Profile
@@ -368,22 +364,22 @@ export default function App() {
                   aria-selected={activeTab === 'uploads'}
                   onClick={() => setActiveTab('uploads')}
                   style={{
-                    padding: '8px 16px',
-                    fontWeight: 700,
-                    background:
-                      activeTab === 'uploads' ? '#90d6e9' : '#f4f4f5',
-                    color: '#111',
+                    padding: '6px 10px',
+                    fontWeight: 600,
+                    background: 'transparent',
+                    border: 'none',
+                    borderBottom:
+                      activeTab === 'uploads'
+                        ? '2px solid #0f766e'
+                        : '2px solid transparent',
+                    color: activeTab === 'uploads' ? '#0f172a' : '#6b7280',
                     cursor: 'pointer',
-                    borderLeft: '1px solid #222',
-                    borderTop: 'none',
-                    borderRight: 'none',
-                    borderBottom: 'none',
-                    outline: 'none',
                   }}
                 >
-                  Uploads
+                  AI Security
                 </button>
-              </div>
+              </nav>
+
 
               {activeTab === 'profile' && (
                 <ProfileTab

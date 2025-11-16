@@ -25,8 +25,8 @@ export default function UploadsTab({
             marginBottom: 16,
           }}
         >
-          <img src="/company.png" alt="AIVault" width={72} height={72} />
-          <h1 style={{ margin: 0 }}>Uploads</h1>
+          <img src="/company.png" alt="AIVault" width={96} height={96} />
+          <h1 style={{ margin: 0 }}>AI Security</h1>
         </div>
   
         <p style={{ fontSize: 14, color: '#4b5563', marginTop: 0 }}>
