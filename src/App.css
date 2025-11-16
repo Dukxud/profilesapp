@@ -11,9 +11,11 @@
   will-change: filter;
   transition: filter 300ms;
 }
+
 .logo:hover {
   filter: drop-shadow(0 0 2em #646cffaa);
 }
+
 .logo.react:hover {
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
@@ -22,6 +24,7 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
@@ -45,8 +48,10 @@
 .auth-shell {
   min-height: 100vh;
   display: flex;
-  justify-content: center;   /* center horizontally */
-  align-items: flex-start;   /* top-align so zoom+scroll works */
+  justify-content: center;
+  /* center horizontally */
+  align-items: flex-start;
+  /* top-align so zoom+scroll works */
   position: relative;
   padding: 24px 16px 40px;
   box-sizing: border-box;
@@ -56,9 +61,10 @@
   position: absolute;
   bottom: 16px;
   right: 16px;
-  width: 128px !important;  /* hard stop */
+  width: 128px !important;
+  /* hard stop */
   height: auto !important;
-  max-width: 20vw; 
+  max-width: 20vw;
   max-height: 20vh;
   object-fit: contain;
   opacity: 0.22;
@@ -69,8 +75,11 @@
 
 /* Optional: center content after sign-in, too */
 .app-authed {
-  width: 720px;      /* <-- THIS is the key: fixed width */
-  max-width: 100%;   /* shrink on small screens */
-  margin: 0;         /* no extra auto-centering here */
+  width: 720px;
+  /* <-- THIS is the key: fixed width */
+  max-width: 100%;
+  /* shrink on small screens */
+  margin: 0;
+  /* no extra auto-centering here */
   padding: 24px;
 }

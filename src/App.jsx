@@ -8,6 +8,13 @@ import { generateClient } from 'aws-amplify/data';
 import { list, uploadData, getUrl } from 'aws-amplify/storage';
 import { fetchAuthSession } from 'aws-amplify/auth';
 
+
+const TABS = [
+  { id: 'profile', label: 'Profile' },
+  { id: 'aiSecurity', label: 'AI Security' },
+];
+
+
 export default function App() {
   const client = generateClient();
 
@@ -102,7 +109,7 @@ export default function App() {
   }
 
   useEffect(() => {
-    if (activeTab === 'uploads') {
+    if (activeTab === 'aiSecurity') {
       refreshUploads();
     }
   }, [activeTab]);
@@ -339,46 +346,32 @@ export default function App() {
                   marginBottom: 12,
                 }}
               >
-                <button
-                  role="tab"
-                  aria-selected={activeTab === 'profile'}
-                  onClick={() => setActiveTab('profile')}
-                  style={{
-                    padding: '6px 10px',
-                    fontWeight: 600,
-                    background: 'transparent',
-                    border: 'none',
-                    borderBottom:
-                      activeTab === 'profile'
-                        ? '2px solid #0f766e'
-                        : '2px solid transparent',
-                    color: activeTab === 'profile' ? '#0f172a' : '#6b7280',
-                    cursor: 'pointer',
-                  }}
-                >
-                  Profile
-                </button>
-
-                <button
-                  role="tab"
-                  aria-selected={activeTab === 'uploads'}
-                  onClick={() => setActiveTab('uploads')}
-                  style={{
-                    padding: '6px 10px',
-                    fontWeight: 600,
-                    background: 'transparent',
-                    border: 'none',
-                    borderBottom:
-                      activeTab === 'uploads'
-                        ? '2px solid #0f766e'
-                        : '2px solid transparent',
-                    color: activeTab === 'uploads' ? '#0f172a' : '#6b7280',
-                    cursor: 'pointer',
-                  }}
-                >
-                  AI Security
-                </button>
+                {TABS.map((tab) => {
+                  const isActive = activeTab === tab.id;
+                  return (
+                    <button
+                      key={tab.id}
+                      role="tab"
+                      aria-selected={isActive}
+                      onClick={() => setActiveTab(tab.id)}
+                      style={{
+                        padding: '6px 10px',
+                        fontWeight: 600,
+                        background: 'transparent',
+                        border: 'none',
+                        borderBottom: isActive
+                          ? '2px solid #0f766e'
+                          : '2px solid transparent',
+                        color: isActive ? '#0f172a' : '#6b7280',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      {tab.label}
+                    </button>
+                  );
+                })}
               </nav>
+
 
 
               {activeTab === 'profile' && (
@@ -409,7 +402,7 @@ export default function App() {
                 />
               )}
 
-              {activeTab === 'uploads' && (
+              {activeTab === 'aiSecurity' && (
                 <UploadsTab
                   docFile={docFile}
                   uploads={uploads}
@@ -439,3 +432,4 @@ function AutoLoad({ user, onUserChange }) {
 
   return null;
 }
+
