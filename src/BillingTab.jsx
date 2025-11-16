@@ -67,7 +67,7 @@ export default function BillingTab({ email, onSignOut }) {
         }}
       >
         <p style={{ fontSize: 14, marginTop: 0, marginBottom: 8 }}>
-          Current plan: <strong>Foundational</strong> · <strong>$X / month</strong>
+          Current plan: <strong>Foundational</strong> · <strong>$9.50 / month</strong>
           {/* TODO: replace X with your real price */}
         </p>
 

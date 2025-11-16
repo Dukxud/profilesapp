@@ -14,8 +14,8 @@ import BillingTab from './BillingTab';
 const TABS = [
   { id: 'profile', label: 'Profile' },
   { id: 'aiSecurity', label: 'AI Security' },
-  { id: 'billing', label: 'Billing' },
   { id: 'vpnClient', label: 'VPN Client' },
+  { id: 'billing', label: 'Billing' },
 ];
 
 
