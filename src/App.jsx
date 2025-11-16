@@ -443,6 +443,14 @@ export default function App() {
                 />
               )}
 
+              {activeTab === 'vpnClient' && (
+                <VPNClientTab
+                  downloading={downloadingVpn}
+                  onDownload={handleDownloadVpnClient}
+                  onSignOut={handleSignOut}
+                />
+              )}
+
               {activeTab === 'billing' && (
                 <BillingTab
                   email={
@@ -454,15 +462,6 @@ export default function App() {
                   onSignOut={handleSignOut}
                 />
               )}
-
-              {activeTab === 'vpnClient' && (
-                <VPNClientTab
-                  downloading={downloadingVpn}
-                  onDownload={handleDownloadVpnClient}
-                  onSignOut={handleSignOut}
-                />
-              )}
-
             </main>
           );
         }}
