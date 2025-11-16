@@ -1,17 +1,19 @@
 // src/App.jsx
 import { useState, useEffect } from 'react';
 import { Authenticator, View, Heading } from '@aws-amplify/ui-react';
-import ProfileTab from './ProfileTab';
-import UploadsTab from './UploadsTab';
 import '@aws-amplify/ui-react/styles.css';
 import { generateClient } from 'aws-amplify/data';
 import { list, uploadData, getUrl } from 'aws-amplify/storage';
 import { fetchAuthSession } from 'aws-amplify/auth';
 
+import ProfileTab from './ProfileTab';
+import UploadsTab from './UploadsTab';
+import BillingTab from './BillingTab';
 
 const TABS = [
   { id: 'profile', label: 'Profile' },
   { id: 'aiSecurity', label: 'AI Security' },
+  { id: 'billing', label: 'Billing' },
 ];
 
 
@@ -416,6 +418,20 @@ export default function App() {
                   onSignOut={handleSignOut}
                 />
               )}
+
+              {activeTab === 'billing' && (
+                <BillingTab
+                  email={
+                    user?.attributes?.email ??
+                    user?.signInDetails?.loginId ??
+                    user?.username ??
+                    email
+                  }
+                  onSignOut={handleSignOut}
+                />
+              )}
+
+
             </main>
           );
         }}

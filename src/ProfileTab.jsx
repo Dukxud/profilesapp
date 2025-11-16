@@ -116,9 +116,9 @@ export default function ProfileTab({
                     />
                 </div>
 
-                <h2 style={{ marginTop: 24, marginBottom: 8 }}>Billing Information</h2>
+                {/* <h2 style={{ marginTop: 24, marginBottom: 8 }}>Billing Information</h2> */}
 
-                {/* Center BILLING fields */}
+                {/* Center BILLING fields
                 <div
                     style={{
                         display: 'flex',
@@ -179,7 +179,7 @@ export default function ProfileTab({
                         onChange={(e) => onChangeField('billingCountry', e.target.value)}
                         isRequired
                     />
-                </div>
+                </div> */}
 
                 <div style={{ color: 'red', marginTop: 12 }}>
                     TODO: Add Terms of Service &amp; Privacy Policy consent
