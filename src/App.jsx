@@ -8,12 +8,14 @@ import { fetchAuthSession } from 'aws-amplify/auth';
 
 import ProfileTab from './ProfileTab';
 import UploadsTab from './UploadsTab';
+import VPNClientTab from './VPNClientTab';
 import BillingTab from './BillingTab';
 
 const TABS = [
   { id: 'profile', label: 'Profile' },
   { id: 'aiSecurity', label: 'AI Security' },
   { id: 'billing', label: 'Billing' },
+  { id: 'vpnClient', label: 'VPN Client' },
 ];
 
 
@@ -41,6 +43,8 @@ export default function App() {
   const [loadingUploads, setLoadingUploads] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [uploadPct, setUploadPct] = useState(0);
+  const [downloadingVpn, setDownloadingVpn] = useState(false);
+
 
   const PROFILE_STORAGE_KEYS = [
     'profileOwner',
@@ -186,6 +190,26 @@ export default function App() {
     } catch (err) {
       console.error('Open file failed', err);
       alert('Could not open file. Please try again.');
+    }
+  };
+
+  const handleDownloadVpnClient = async () => {
+    if (downloadingVpn) return;
+
+    setDownloadingVpn(true);
+    try {
+      const { url } = await getUrl({
+        // exact object you just uploaded in the downloads folder
+        path: 'downloads/vpn-client-installer.exe',
+      });
+
+      // Trigger the browser download
+      window.location.href = url.toString();
+    } catch (err) {
+      console.error('VPN client download failed', err);
+      alert('Could not start VPN client download. Please try again.');
+    } finally {
+      setDownloadingVpn(false);
     }
   };
 
@@ -431,6 +455,13 @@ export default function App() {
                 />
               )}
 
+              {activeTab === 'vpnClient' && (
+                <VPNClientTab
+                  downloading={downloadingVpn}
+                  onDownload={handleDownloadVpnClient}
+                  onSignOut={handleSignOut}
+                />
+              )}
 
             </main>
           );
