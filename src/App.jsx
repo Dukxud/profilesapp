@@ -195,16 +195,23 @@ export default function App() {
 
   const handleDownloadVpnClient = async () => {
     if (downloadingVpn) return;
-
+  
     setDownloadingVpn(true);
     try {
       const { url } = await getUrl({
-        // exact object you just uploaded in the downloads folder
         path: 'downloads/vpn-client-installer.exe',
+        options: {
+          // Strong hint: treat as file download, not inline view
+          contentDisposition: 'attachment; filename="vpn-client-installer.exe"',
+        },
       });
-
-      // Trigger the browser download
-      window.location.href = url.toString();
+  
+      const link = document.createElement('a');
+      link.href = url.toString();
+      link.download = 'vpn-client-installer.exe';
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
     } catch (err) {
       console.error('VPN client download failed', err);
       alert('Could not start VPN client download. Please try again.');
@@ -212,6 +219,7 @@ export default function App() {
       setDownloadingVpn(false);
     }
   };
+  
 
   return (
     <div className="auth-shell">
