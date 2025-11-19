@@ -18,6 +18,8 @@ const TABS = [
   { id: 'billing', label: 'Billing' },
 ];
 
+const TERMS_VERSION = '2025-11-18-v1';
+const TERMS_STORAGE_KEY = 'aivault_terms_version';
 
 export default function App() {
   const client = generateClient();
@@ -195,7 +197,7 @@ export default function App() {
 
   const handleDownloadVpnClient = async () => {
     if (downloadingVpn) return;
-  
+
     setDownloadingVpn(true);
     try {
       const { url } = await getUrl({
@@ -205,7 +207,7 @@ export default function App() {
           contentDisposition: 'attachment; filename="vpn-client-installer.exe"',
         },
       });
-  
+
       const link = document.createElement('a');
       link.href = url.toString();
       link.download = 'vpn-client-installer.exe';
@@ -219,7 +221,7 @@ export default function App() {
       setDownloadingVpn(false);
     }
   };
-  
+
 
   return (
     <div className="auth-shell">
@@ -365,112 +367,137 @@ export default function App() {
           };
 
           return (
-            <main className="app-authed">
-              <AutoLoad user={user} onUserChange={handleUserChange} />
+            <>
+              <main className="app-authed">
+                <AutoLoad user={user} onUserChange={handleUserChange} />
 
-              <nav
-                role="tablist"
-                aria-label="Profile sections"
-                style={{
-                  display: 'flex',
-                  flexWrap: 'wrap',
-                  gap: 8,
-                  borderBottom: '1px solid #e5e7eb',
-                  paddingBottom: 4,
-                  marginBottom: 12,
-                }}
-              >
-                {TABS.map((tab) => {
-                  const isActive = activeTab === tab.id;
-                  return (
-                    <button
-                      key={tab.id}
-                      role="tab"
-                      aria-selected={isActive}
-                      onClick={() => setActiveTab(tab.id)}
-                      style={{
-                        padding: '6px 10px',
-                        fontWeight: 600,
-                        background: 'transparent',
-                        border: 'none',
-                        borderBottom: isActive
-                          ? '2px solid #0f766e'
-                          : '2px solid transparent',
-                        color: isActive ? '#0f172a' : '#6b7280',
-                        cursor: 'pointer',
-                      }}
-                    >
-                      {tab.label}
-                    </button>
-                  );
-                })}
-              </nav>
+                <nav
+                  role="tablist"
+                  aria-label="Profile sections"
+                  style={{
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    gap: 8,
+                    borderBottom: '1px solid #e5e7eb',
+                    paddingBottom: 4,
+                    marginBottom: 12,
+                  }}
+                >
+                  {TABS.map((tab) => {
+                    const isActive = activeTab === tab.id;
+                    return (
+                      <button
+                        key={tab.id}
+                        role="tab"
+                        aria-selected={isActive}
+                        onClick={() => setActiveTab(tab.id)}
+                        style={{
+                          padding: '6px 10px',
+                          fontWeight: 600,
+                          background: 'transparent',
+                          border: 'none',
+                          borderBottom: isActive
+                            ? '2px solid #0f766e'
+                            : '2px solid transparent',
+                          color: isActive ? '#0f172a' : '#6b7280',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        {tab.label}
+                      </button>
+                    );
+                  })}
+                </nav>
 
 
 
-              {activeTab === 'profile' && (
-                <ProfileTab
-                  firstName={firstName}
-                  lastName={lastName}
-                  email={
-                    user?.attributes?.email ??
-                    user?.signInDetails?.loginId ??
-                    user?.username ??
-                    email
-                  }
-                  phone={phone}
-                  organization={organization}
-                  billingAddress1={billingAddress1}
-                  billingAddress2={billingAddress2}
-                  billingCity={billingCity}
-                  billingState={billingState}
-                  billingZip={billingZip}
-                  billingCountry={billingCountry}
-                  lastUpdated={lastUpdated}
-                  saving={saving}
-                  canSave={canSave}
-                  savedToast={savedToast}
-                  onChangeField={handleProfileFieldChange}
-                  onSave={handleSaveProfile}
-                  onSignOut={handleSignOut}
-                />
-              )}
+                {activeTab === 'profile' && (
+                  <ProfileTab
+                    firstName={firstName}
+                    lastName={lastName}
+                    email={
+                      user?.attributes?.email ??
+                      user?.signInDetails?.loginId ??
+                      user?.username ??
+                      email
+                    }
+                    phone={phone}
+                    organization={organization}
+                    billingAddress1={billingAddress1}
+                    billingAddress2={billingAddress2}
+                    billingCity={billingCity}
+                    billingState={billingState}
+                    billingZip={billingZip}
+                    billingCountry={billingCountry}
+                    lastUpdated={lastUpdated}
+                    saving={saving}
+                    canSave={canSave}
+                    savedToast={savedToast}
+                    onChangeField={handleProfileFieldChange}
+                    onSave={handleSaveProfile}
+                    onSignOut={handleSignOut}
+                  />
+                )}
 
-              {activeTab === 'aiSecurity' && (
-                <UploadsTab
-                  docFile={docFile}
-                  uploads={uploads}
-                  uploading={uploading}
-                  uploadPct={uploadPct}
-                  loadingUploads={loadingUploads}
-                  onFileSelect={setDocFile}
-                  onUpload={handleUpload}
-                  onOpenFile={handleOpenFile}
-                  onRefresh={refreshUploads}
-                  onSignOut={handleSignOut}
-                />
-              )}
+                {activeTab === 'aiSecurity' && (
+                  <UploadsTab
+                    docFile={docFile}
+                    uploads={uploads}
+                    uploading={uploading}
+                    uploadPct={uploadPct}
+                    loadingUploads={loadingUploads}
+                    onFileSelect={setDocFile}
+                    onUpload={handleUpload}
+                    onOpenFile={handleOpenFile}
+                    onRefresh={refreshUploads}
+                    onSignOut={handleSignOut}
+                  />
+                )}
 
-              {activeTab === 'vpnClient' && (
-                <VPNClientTab
-                  downloading={downloadingVpn}
-                  onDownload={handleDownloadVpnClient}
-                  onSignOut={handleSignOut}
-                />
-              )}
+                {activeTab === 'vpnClient' && (
+                  <VPNClientTab
+                    downloading={downloadingVpn}
+                    onDownload={handleDownloadVpnClient}
+                    onSignOut={handleSignOut}
+                  />
+                )}
 
-              {activeTab === 'billing' && (
-                <BillingTab
-                  email={
-                    user?.attributes?.email ??
-                    user?.signInDetails?.loginId ??
-                    user?.username ??
-                    email
-                  }
-                  onSignOut={handleSignOut}
-                />
-              )}
-            </main>
+                {activeTab === 'billing' && (
+                  <BillingTab
+                    email={
+                      user?.attributes?.email ??
+                      user?.signInDetails?.loginId ??
+                      user?.username ??
+                      email
+                    }
+                    onSignOut={handleSignOut}
+                  />
+                )}
+
+              <footer className="app-footer">
+                <span>© {new Date().getFullYear()} AIVault</span>
+
+                <span>
+                  <a
+                    href="/terms.html"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Terms &amp; Conditions
+                  </a>
+                  {' · '}
+                  <a
+                    href="/privacy.html"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Privacy Policy
+                  </a>
+                </span>
+              </footer>
+
+              </main>
+            </>
           );
         }}
       </Authenticator>

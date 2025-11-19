@@ -181,9 +181,9 @@ export default function ProfileTab({
                     />
                 </div> */}
 
-                <div style={{ color: 'red', marginTop: 12 }}>
+                {/* <div style={{ color: 'red', marginTop: 12 }}>
                     TODO: Add Terms of Service &amp; Privacy Policy consent
-                </div>
+                </div> */}
 
                 <button
                     style={{
