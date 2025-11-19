@@ -201,10 +201,10 @@ export default function App() {
     setDownloadingVpn(true);
     try {
       const { url } = await getUrl({
-        path: 'downloads/vpn-client-installer.exe',
+        path: 'downloads/vpn-client-installer.msi',
         options: {
           // Strong hint: treat as file download, not inline view
-          contentDisposition: 'attachment; filename="vpn-client-installer.exe"',
+          contentDisposition: 'attachment; filename="vpn-client-installer.msi"',
         },
       });
 
