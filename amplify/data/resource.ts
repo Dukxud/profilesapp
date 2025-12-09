@@ -1,5 +1,3 @@
-
-
 import { a, defineData, type ClientSchema } from '@aws-amplify/backend';
 
 const schema = a.schema({
@@ -10,23 +8,9 @@ const schema = a.schema({
       email: a.email(),
       phone: a.string(),
       organization: a.string(),
-      billingAddress1: a.string(),
-      billingAddress2: a.string(),
-      billingCity: a.string(),
-      billingState: a.string(),
-      billingZip: a.string(),
-      billingCountry: a.string(),
       identityId: a.string(),
-      
-
-      // marketplace info
-      marketplaceCustomerId: a.string(),
-      marketplaceProductCode: a.string(),
-      marketplaceLinkedAt: a.datetime(),
-      plan: a.string(),                    // negotiated plan name/label
-      entitled: a.boolean(),               // true once Marketplace shows active entitlement
-      contractEndAt: a.datetime(),         // optional: when the contract ends (for UI)
-
+      portNum: a.string(),
+      IPAddress: a.string(),
     })
     .authorization((allow) => [allow.owner()]),
 });
