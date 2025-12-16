@@ -71,6 +71,7 @@ exports.handler = async (event) => {
         'Access-Control-Allow-Origin': origin,
         'Access-Control-Allow-Headers': 'Content-Type',
         'Access-Control-Allow-Methods': 'OPTIONS,POST',
+        'X-Build': 'promo-enabled-v1',
       },
       body: JSON.stringify({ 
         url: session.url,
