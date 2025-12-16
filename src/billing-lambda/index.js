@@ -56,12 +56,7 @@ exports.handler = async (event) => {
 
     const session = await stripe.checkout.sessions.create({
       mode: 'subscription',
-      line_items: [
-        {
-          price: process.env.STRIPE_PRICE_ID,
-          quantity: 1,
-        },
-      ],
+      line_items: [{price: process.env.STRIPE_PRICE_ID, quantity: 1}],
       payment_method_types: ['card'],
       customer_email: email || undefined,
       allow_promotion_codes: true,
@@ -77,7 +72,11 @@ exports.handler = async (event) => {
         'Access-Control-Allow-Headers': 'Content-Type',
         'Access-Control-Allow-Methods': 'OPTIONS,POST',
       },
-      body: JSON.stringify({ url: session.url }),
+      body: JSON.stringify({ 
+        url: session.url,
+        build: 'promo-enabled-v1',
+        allow_promotion_codes: true,
+       }),
     };
   } catch (err) {
     console.error('Stripe checkout error', err);
