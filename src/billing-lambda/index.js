@@ -64,6 +64,7 @@ exports.handler = async (event) => {
       ],
       payment_method_types: ['card'],
       customer_email: email || undefined,
+      allow_promotion_codes: true,
       success_url: `${frontend}/billing?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${frontend}/billing?canceled=1`,
     });
