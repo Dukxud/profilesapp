@@ -13,37 +13,27 @@ const schema = a.schema({
       portNum: a.string(),
       IPAddress: a.string(),
 
-      // NEW FIELDS FOR PAYER / VPN / BILLING LOGIC
+      // NEW: MAC address for this device/profile
+      macAddress: a.string(),
 
       // Who pays for this profile:
       // - For payer's own row: payingUserId === id
       // - For dependents: payingUserId = payer's Profile.id
       payingUserId: a.string(),
 
-      // VPN seat index under that payer:
-      // 1 for payer's own seat, 2+ for dependents
+      // Optional: if you want to store the index explicitly
       vpnSeatIndex: a.integer(),
 
-      // Actual VPN login string, e.g. "<payingUserId>_<vpnSeatIndex>"
+      // Actual VPN login string, e.g. "<payingUserId>_<index>"
       vpnUsername: a.string(),
 
-      // Whether this seat is currently allowed to use VPN
+      // Optional flags / billing cache; fine to leave null for now
       isActive: a.boolean(),
-
-      // Cached subscription end time for this payer (only meaningful on payer row)
       subscriptionEndsAt: a.datetime(),
-
-      // Stripe linkage (only meaningful on payer row)
       stripeCustomerId: a.string(),
       stripeSubscriptionId: a.string(),
-
-      // Max seats allowed for this payer (only meaningful on payer row)
       vpnSeatLimit: a.integer(),
-
-      // Human label for this device/profile, e.g. "Mom's iPhone"
       deviceLabel: a.string(),
-
-      // When this specific seat was deactivated (if ever)
       deactivatedAt: a.datetime(),
     })
     .authorization((allow) => [allow.owner()]),
