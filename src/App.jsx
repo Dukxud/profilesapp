@@ -18,6 +18,15 @@ const TABS = [
   { id: 'billing', label: 'Billing' },
 ];
 
+const LANGUAGE_OPTIONS = [
+  'English',
+  'Spanish',
+  'French',
+  'German',
+  'Portuguese',
+  'Arabic',
+];
+
 const TERMS_VERSION = '2025-11-18-v1';
 const TERMS_STORAGE_KEY = 'aivault_terms_version';
 
@@ -35,6 +44,7 @@ export default function App() {
   const [billingState, setBillingState] = useState('');
   const [billingZip, setBillingZip] = useState('');
   const [billingCountry, setBillingCountry] = useState('');
+  const [language, setLanguage] = useState('English');
   const [profileId, setProfileId] = useState('');
   const [savedToast, setSavedToast] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -62,6 +72,7 @@ export default function App() {
     'billingState',
     'billingZip',
     'billingCountry',
+    'language',
   ];
 
   const resetProfileState = () => {
@@ -80,6 +91,7 @@ export default function App() {
     setBillingState('');
     setBillingZip('');
     setBillingCountry('');
+    setLanguage('English');
   };
 
   const resetUploadsState = () => {
@@ -148,6 +160,7 @@ export default function App() {
     setBillingZip(latest.billingZip ?? '');
     setBillingCountry(latest.billingCountry ?? '');
     setLastUpdated(latest.updatedAt || latest.createdAt || '');
+    setLanguage(latest.language ?? 'English')
   }
 
 
@@ -294,6 +307,9 @@ export default function App() {
               case 'billingCountry':
                 setBillingCountry(value);
                 break;
+              case 'language':
+                setLanguage(value);
+                break;
               default:
                 break;
             }
@@ -328,6 +344,7 @@ export default function App() {
                 billingZip: nn(billingZip),
                 billingCountry: nn(billingCountry),
                 identityId,
+                language: (language ?? 'English').toString().trim() || 'English',
               };
 
               const { data } = profileId
@@ -427,6 +444,8 @@ export default function App() {
                     billingState={billingState}
                     billingZip={billingZip}
                     billingCountry={billingCountry}
+                    language={language}
+                    languageOptions={LANGUAGE_OPTIONS}
                     lastUpdated={lastUpdated}
                     saving={saving}
                     canSave={canSave}

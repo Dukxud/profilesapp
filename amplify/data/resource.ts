@@ -12,6 +12,7 @@ const schema = a.schema({
       identityId: a.string(),
       portNum: a.string(),
       IPAddress: a.string(),
+      language: a.string(),
 
       // NEW: MAC address for this device/profile
       macAddress: a.string(),
