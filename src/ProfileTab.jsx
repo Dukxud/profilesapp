@@ -185,14 +185,18 @@ export default function ProfileTab({
                     />
                 </div> */}
 
-                {/* Language selector (bottom of Profile page) */}
+                {/* <div style={{ color: 'red', marginTop: 12 }}>
+                    TODO: Add Terms of Service &amp; Privacy Policy consent
+                </div> */}
+
+                {/* Language selector at bottom (looks like a normal line item) */}
                 <div
                     style={{
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'center',
                         gap: 8,
-                        marginTop: 8, // keep it like a normal line item, not a separate section
+                        marginTop: 12,
                     }}
                 >
                     <SelectField
@@ -209,49 +213,50 @@ export default function ProfileTab({
                     </SelectField>
                 </div>
 
-                {/* Divider AFTER all profile fields (not above the selector) */}
-                <div
-                    style={{
-                        width: 280,
-                        height: 1,
-                        background: '#e5e7eb',
-                        margin: '12px auto 0 auto',
-                    }}
-                />
+                {/* Actions area (full width). Divider matches this width. */}
+                <div style={{ width: '100%', marginTop: 12 }}>
+                    <div
+                        style={{
+                            width: '100%',
+                            height: 1,
+                            background: '#e5e7eb',
+                        }}
+                    />
 
-                <button
-                    style={{
-                        marginTop: 12,
-                        padding: '10px 16px',
-                        borderRadius: 10,
-                        border: canSave ? '1px solid #6b7280' : '1px solid #e5e7eb',
-                        background: canSave ? '#90d6e9' : '#e5e7eb',
-                        color: canSave ? '#111' : 'white',
-                        fontWeight: 700,
-                        cursor: canSave ? 'pointer' : 'not-allowed',
-                    }}
-                    disabled={!canSave || saving}
-                    onClick={onSave}
-                >
-                    {saving ? 'Saving…' : 'Save profile'}
-                </button>
+                    <button
+                        style={{
+                            marginTop: 12,
+                            padding: '10px 16px',
+                            borderRadius: 10,
+                            border: canSave ? '1px solid #6b7280' : '1px solid #e5e7eb',
+                            background: canSave ? '#90d6e9' : '#e5e7eb',
+                            color: canSave ? '#111' : 'white',
+                            fontWeight: 700,
+                            cursor: canSave ? 'pointer' : 'not-allowed',
+                        }}
+                        disabled={!canSave || saving}
+                        onClick={onSave}
+                    >
+                        {saving ? 'Saving…' : 'Save profile'}
+                    </button>
 
-                <button
-                    onClick={onSignOut}
-                    style={{
-                        marginTop: 12,
-                        marginLeft: 8,
-                        padding: '10px 16px',
-                        borderRadius: 10,
-                        border: '1px solid #e5e7eb',
-                        background: 'white',
-                        color: '#111',
-                        fontWeight: 700,
-                        cursor: 'pointer',
-                    }}
-                >
-                    Sign out
-                </button>
+                    <button
+                        onClick={onSignOut}
+                        style={{
+                            marginTop: 12,
+                            marginLeft: 8,
+                            padding: '10px 16px',
+                            borderRadius: 10,
+                            border: '1px solid #e5e7eb',
+                            background: 'white',
+                            color: '#111',
+                            fontWeight: 700,
+                            cursor: 'pointer',
+                        }}
+                    >
+                        Sign out
+                    </button>
+                </div>
             </div>
 
             {savedToast && (
