@@ -119,38 +119,40 @@ export default function ProfileTab({
                         isRequired
                     />
                     {/* Language selector (bottom of Profile page) */}
-                </div>
-                <div
-                    style={{
-                        marginTop: 20,
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        gap: 8,
-                    }}
-                >
                     <div
                         style={{
-                            width: 280,
-                            height: 1,
-                            background: '#e5e7eb',
-                            marginTop: 6,
-                            marginBottom: 6,
+                            marginTop: 20,
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            gap: 8,
                         }}
-                    />
-                    <SelectField
-                        label="Language"
-                        width="280px"
-                        value={language || 'English'}
-                        onChange={(e) => onChangeField('language', e.target.value)}
                     >
-                        {(languageOptions || []).map((opt) => (
-                            <option key={opt} value={opt}>
-                                {opt}
-                            </option>
-                        ))}
-                    </SelectField>
+                        <div
+                            style={{
+                                width: 280,
+                                height: 1,
+                                background: '#e5e7eb',
+                                marginTop: 6,
+                                marginBottom: 6,
+                            }}
+                        />
+                        <SelectField
+                            label="Language"
+                            width="280px"
+                            value={language || 'English'}
+                            onChange={(e) => onChangeField('language', e.target.value)}
+                        >
+                            {(languageOptions || []).map((opt) => (
+                                <option key={opt} value={opt}>
+                                    {opt}
+                                </option>
+                            ))}
+                        </SelectField>
+                    </div>
                 </div>
+
+
 
                 <button
                     style={{
