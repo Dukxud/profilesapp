@@ -57,6 +57,7 @@ export default function App() {
   const [uploadPct, setUploadPct] = useState(0);
   const [downloadingVpn, setDownloadingVpn] = useState(false);
 
+
   const PROFILE_STORAGE_KEYS = [
     'profileOwner',
     'profileId',
@@ -158,9 +159,11 @@ export default function App() {
     setBillingState(latest.billingState ?? '');
     setBillingZip(latest.billingZip ?? '');
     setBillingCountry(latest.billingCountry ?? '');
-    setLanguage(latest.language ?? 'English');
     setLastUpdated(latest.updatedAt || latest.createdAt || '');
+    setLanguage(latest.language ?? 'English')
   }
+ 
+
 
   const handleUpload = async () => {
     if (!docFile || uploading) return;
@@ -183,8 +186,10 @@ export default function App() {
       });
 
       await uploadTask.result;
-      await refreshUploads();
+
       setDocFile(null);
+      setUploadPct(0);
+      await refreshUploads();
     } catch (err) {
       console.error('Upload failed', err);
       alert('Upload failed. Please try again.');
@@ -203,92 +208,38 @@ export default function App() {
     }
   };
 
-  useEffect(() => {
-    refreshUploads();
-  }, []);
+  const handleDownloadVpnClient = async () => {
+    if (downloadingVpn) return;
 
-  const [hasAcceptedTerms, setHasAcceptedTerms] = useState(false);
+    setDownloadingVpn(true);
+    try {
+      const { url } = await getUrl({
+        path: 'downloads/vpn-client-installer.msi',
+        options: {
+          // Strong hint: treat as file download, not inline view
+          contentDisposition: 'attachment; filename="vpn-client-installer.msi"',
+        },
+      });
 
-  useEffect(() => {
-    const stored = localStorage.getItem(TERMS_STORAGE_KEY);
-    setHasAcceptedTerms(stored === TERMS_VERSION);
-  }, []);
-
-  const handleAcceptTerms = () => {
-    localStorage.setItem(TERMS_STORAGE_KEY, TERMS_VERSION);
-    setHasAcceptedTerms(true);
+      const link = document.createElement('a');
+      link.href = url.toString();
+      link.download = 'vpn-client-installer.exe';
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (err) {
+      console.error('VPN client download failed', err);
+      alert('Could not start VPN client download. Please try again.');
+    } finally {
+      setDownloadingVpn(false);
+    }
   };
 
-  if (!hasAcceptedTerms) {
-    return (
-      <div
-        style={{
-          minHeight: '100vh',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          background: '#f3f4f6',
-          padding: 16,
-        }}
-      >
-        <div
-          style={{
-            maxWidth: 520,
-            width: '100%',
-            background: 'white',
-            padding: 24,
-            borderRadius: 16,
-            boxShadow: '0 20px 60px rgba(15,23,42,0.18)',
-          }}
-        >
-          <h1 style={{ marginTop: 0, marginBottom: 12 }}>Terms of Service</h1>
-          <p style={{ fontSize: 14, lineHeight: 1.5 }}>
-            Before using this service, please review and accept the Terms of Service and
-            Privacy Policy. You can open them in a new tab:
-          </p>
-          <ul style={{ fontSize: 14, paddingLeft: 20 }}>
-            <li>
-              <a href="/terms.html" target="_blank" rel="noopener noreferrer">
-                Terms of Service
-              </a>
-            </li>
-            <li>
-              <a href="/privacy.html" target="_blank" rel="noopener noreferrer">
-                Privacy Policy
-              </a>
-            </li>
-          </ul>
-          <button
-            onClick={handleAcceptTerms}
-            style={{
-              marginTop: 16,
-              padding: '10px 16px',
-              borderRadius: 999,
-              border: '1px solid #0f766e',
-              background: '#0f766e',
-              color: 'white',
-              fontWeight: 600,
-              cursor: 'pointer',
-            }}
-          >
-            I have read and accept the Terms
-          </button>
-        </div>
-      </div>
-    );
-  }
 
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        background: '#f3f4f6',
-        padding: '24px 12px',
-        display: 'flex',
-        justifyContent: 'center',
-      }}
-    >
+    <div className="auth-shell">
       <Authenticator
+        style={{ width: '100%', maxWidth: 420 }}
         components={{
           Header() {
             return (
@@ -300,7 +251,7 @@ export default function App() {
                   height={128}
                   style={{ display: 'block', margin: '0 auto 6px' }}
                 />
-                {/* no text header here to avoid "AI Vault" label */}
+
               </View>
             );
           },
@@ -309,11 +260,11 @@ export default function App() {
         {({ user, signOut }) => {
           const canSave = Boolean(
             firstName.trim() &&
-              lastName.trim() &&
-              phone.trim() &&
-              (user?.attributes?.email ??
-                user?.signInDetails?.loginId ??
-                user?.username)
+            lastName.trim() &&
+            phone.trim() &&
+            (user?.attributes?.email ??
+              user?.signInDetails?.loginId ??
+              user?.username)
           );
 
           const handleSignOut = () => {
@@ -392,19 +343,19 @@ export default function App() {
                 billingState: nn(billingState),
                 billingZip: nn(billingZip),
                 billingCountry: nn(billingCountry),
-                language: (language || 'English').toString().trim() || 'English',
                 identityId,
+                language: (language ?? 'English').toString().trim() || 'English',
               };
 
               const { data } = profileId
                 ? await client.models.Profile.update(
-                    { id: profileId, ...payload },
-                    { authMode: 'userPool' }
-                  )
+                  { id: profileId, ...payload },
+                  { authMode: 'userPool' }
+                )
                 : await client.models.Profile.create(
-                    { ...payload },
-                    { authMode: 'userPool' }
-                  );
+                  { ...payload },
+                  { authMode: 'userPool' }
+                );
 
               setProfileId(data.id);
               setLastUpdated(
@@ -423,92 +374,28 @@ export default function App() {
             resetUploadsState();
             resetProfileState();
             clearProfileStorage();
-
-            if (!nextUser) {
-              return;
-            }
-
             setEmail(deriveUserEmail(nextUser));
-            loadLatest().catch((err) => {
-              console.warn('loadLatest failed:', err);
-            });
+
+            loadLatest().catch((e) =>
+              console.error('auto-load profile failed', e)
+            );
           };
 
           return (
-            <View
-              padding="0"
-              as="main"
-              style={{
-                maxWidth: 960,
-                width: '100%',
-                margin: '0 auto',
-                background: 'white',
-                borderRadius: 16,
-                boxShadow: '0 20px 60px rgba(15,23,42,0.18)',
-                overflow: 'hidden',
-              }}
-            >
-              <AutoLoad user={user} onUserChange={handleUserChange} />
+            <>
+              <main className="app-authed">
+                <AutoLoad user={user} onUserChange={handleUserChange} />
 
-              <div
-                style={{
-                  padding: '16px 20px 0',
-                  borderBottom: '1px solid #e5e7eb',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  gap: 12,
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <img
-                    src="/company.png"
-                    alt="AIVault"
-                    width={64}
-                    height={64}
-                    style={{ borderRadius: 12 }}
-                  />
-                  <div>
-                    <Heading
-                      level={3}
-                      style={{ margin: 0, fontSize: 20, fontWeight: 700 }}
-                    >
-                      Profile &amp; AI Vault
-                    </Heading>
-                    <div style={{ fontSize: 12, color: '#6b7280' }}>
-                      Signed in as{' '}
-                      <span style={{ fontWeight: 600 }}>
-                        {deriveUserEmail(user)}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                <button
-                  onClick={handleSignOut}
-                  style={{
-                    padding: '8px 14px',
-                    borderRadius: 999,
-                    border: '1px solid #e5e7eb',
-                    background: 'white',
-                    fontSize: 13,
-                    fontWeight: 600,
-                    cursor: 'pointer',
-                  }}
-                >
-                  Sign out
-                </button>
-              </div>
-
-              <div style={{ padding: '0 20px 20px' }}>
                 <nav
+                  role="tablist"
                   aria-label="Profile sections"
                   style={{
-                    marginTop: 12,
-                    marginBottom: 12,
-                    borderBottom: '1px solid #e5e7eb',
                     display: 'flex',
+                    flexWrap: 'wrap',
                     gap: 8,
+                    borderBottom: '1px solid #e5e7eb',
+                    paddingBottom: 4,
+                    marginBottom: 12,
                   }}
                 >
                   {TABS.map((tab) => {
@@ -522,7 +409,6 @@ export default function App() {
                         style={{
                           padding: '6px 10px',
                           fontWeight: 600,
-                          fontSize: 13,
                           background: 'transparent',
                           border: 'none',
                           borderBottom: isActive
@@ -537,6 +423,8 @@ export default function App() {
                     );
                   })}
                 </nav>
+
+
 
                 {activeTab === 'profile' && (
                   <ProfileTab
@@ -585,8 +473,8 @@ export default function App() {
 
                 {activeTab === 'vpnClient' && (
                   <VPNClientTab
-                    downloadingVpn={downloadingVpn}
-                    setDownloadingVpn={setDownloadingVpn}
+                    downloading={downloadingVpn}
+                    onDownload={handleDownloadVpnClient}
                     onSignOut={handleSignOut}
                   />
                 )}
@@ -602,8 +490,31 @@ export default function App() {
                     onSignOut={handleSignOut}
                   />
                 )}
-              </div>
-            </View>
+
+              <footer className="app-footer">
+                <span>© {new Date().getFullYear()} AIVault</span>
+
+                <span>
+                  <a
+                    href="/terms.html"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Terms &amp; Conditions
+                  </a>
+                  {' · '}
+                  <a
+                    href="/privacy.html"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Privacy Policy
+                  </a>
+                </span>
+              </footer>
+
+              </main>
+            </>
           );
         }}
       </Authenticator>
@@ -619,3 +530,4 @@ function AutoLoad({ user, onUserChange }) {
 
   return null;
 }
+
