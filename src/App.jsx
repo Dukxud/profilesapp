@@ -162,7 +162,7 @@ export default function App() {
     setLastUpdated(latest.updatedAt || latest.createdAt || '');
     setLanguage(latest.language ?? 'English')
   }
- 
+
 
 
   const handleUpload = async () => {
@@ -318,33 +318,37 @@ export default function App() {
           const handleSaveProfile = async () => {
             if (saving) return;
             setSaving(true);
+
             try {
+              // Always derive email from Cognito first
               const cognitoEmail = (
                 user?.attributes?.email ??
                 user?.signInDetails?.loginId ??
                 user?.username ??
                 email
-              )
-                .toString()
-                .trim();
+              );
 
-              const nn = (s) => (s.trim() === '' ? null : s.trim());
+              const clean = (s) => (s || '').toString().trim();
+
+              // If you KNOW your Profile model has an `identityId` field, keep this.
+              // If not, comment it out and remove `identityId` from the payload.
               const { identityId } = await fetchAuthSession();
 
               const payload = {
-                firstName: firstName.trim(),
-                lastName: lastName.trim(),
-                email: cognitoEmail,
-                phone: phone.trim(),
-                organization: nn(organization),
-                billingAddress1: nn(billingAddress1),
-                billingAddress2: nn(billingAddress2),
-                billingCity: nn(billingCity),
-                billingState: nn(billingState),
-                billingZip: nn(billingZip),
-                billingCountry: nn(billingCountry),
-                identityId,
-                language: (language ?? 'English').toString().trim() || 'English',
+                firstName: clean(firstName),
+                lastName: clean(lastName),
+                email: clean(cognitoEmail),
+                phone: clean(phone),
+                organization: clean(organization),
+                billingAddress1: clean(billingAddress1),
+                billingAddress2: clean(billingAddress2),
+                billingCity: clean(billingCity),
+                billingState: clean(billingState),
+                billingZip: clean(billingZip),
+                billingCountry: clean(billingCountry),
+                language: clean(language || 'English') || 'English',
+                // 🔥 ONLY keep this line if your Profile model actually has `identityId`:
+                // identityId,
               };
 
               const { data } = profileId
@@ -361,13 +365,20 @@ export default function App() {
               setLastUpdated(
                 data?.updatedAt || data?.createdAt || new Date().toISOString()
               );
+
+              // Re-pull from backend so UI matches DB
               await loadLatest();
+
               setSavedToast(true);
               setTimeout(() => setSavedToast(false), 3000);
+            } catch (err) {
+              console.error('Save profile failed:', err);
+              alert('Could not save profile. Check the browser console for details.');
             } finally {
               setSaving(false);
             }
           };
+
 
           const handleUserChange = (nextUser) => {
             setActiveTab('profile');
@@ -491,27 +502,27 @@ export default function App() {
                   />
                 )}
 
-              <footer className="app-footer">
-                <span>© {new Date().getFullYear()} AIVault</span>
+                <footer className="app-footer">
+                  <span>© {new Date().getFullYear()} AIVault</span>
 
-                <span>
-                  <a
-                    href="/terms.html"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Terms &amp; Conditions
-                  </a>
-                  {' · '}
-                  <a
-                    href="/privacy.html"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Privacy Policy
-                  </a>
-                </span>
-              </footer>
+                  <span>
+                    <a
+                      href="/terms.html"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Terms &amp; Conditions
+                    </a>
+                    {' · '}
+                    <a
+                      href="/privacy.html"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Privacy Policy
+                    </a>
+                  </span>
+                </footer>
 
               </main>
             </>
