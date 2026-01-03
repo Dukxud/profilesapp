@@ -1,5 +1,4 @@
 // src/ProfileTab.jsx
-
 import { TextField, SelectField } from '@aws-amplify/ui-react';
 
 const Req = ({ text }) => (
@@ -21,8 +20,10 @@ export default function ProfileTab({
     billingState,
     billingZip,
     billingCountry,
+
     language,
     languageOptions,
+
     lastUpdated,
     saving,
     canSave,
@@ -31,6 +32,7 @@ export default function ProfileTab({
     onSave,
     onSignOut,
 }) {
+    const selectedLanguage = (language ?? 'English').toString();
 
     return (
         <>
@@ -118,45 +120,100 @@ export default function ProfileTab({
                         onChange={(e) => onChangeField('phone', e.target.value)}
                         isRequired
                     />
-                    {/* Language selector (bottom of Profile page) */}
-                    <div
-                        style={{
-                            marginTop: 20,
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            gap: 8,
-                        }}
-                    >
-                        <div
-                            style={{
-                                width: 280,
-                                height: 1,
-                                background: '#e5e7eb',
-                                marginTop: 6,
-                                marginBottom: 6,
-                            }}
-                        />
-                        <SelectField
-                            label="Language"
-                            width="280px"
-                            value={language || 'English'}
-                            onChange={(e) => onChangeField('language', e.target.value)}
-                        >
-                            {(languageOptions || []).map((opt) => (
-                                <option key={opt} value={opt}>
-                                    {opt}
-                                </option>
-                            ))}
-                        </SelectField>
-                    </div>
                 </div>
 
+                {/* <h2 style={{ marginTop: 24, marginBottom: 8 }}>Billing Information</h2> */}
 
+                {/* Center BILLING fields
+                <div
+                    style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        gap: 8,
+                    }}
+                >
+                    <TextField
+                        label={<Req text="Address line 1" />}
+                        placeholder="Street address"
+                        width="280px"
+                        value={billingAddress1}
+                        onChange={(e) => onChangeField('billingAddress1', e.target.value)}
+                        isRequired
+                    />
+
+                    <TextField
+                        label="Address line 2"
+                        placeholder="Apt, suite, etc. (optional)"
+                        width="280px"
+                        value={billingAddress2}
+                        onChange={(e) => onChangeField('billingAddress2', e.target.value)}
+                    />
+
+                    <TextField
+                        label={<Req text="City" />}
+                        placeholder="e.g., New York City"
+                        width="280px"
+                        value={billingCity}
+                        onChange={(e) => onChangeField('billingCity', e.target.value)}
+                        isRequired
+                    />
+
+                    <TextField
+                        label={<Req text="State / Province" />}
+                        placeholder="e.g., New York"
+                        width="280px"
+                        value={billingState}
+                        onChange={(e) => onChangeField('billingState', e.target.value)}
+                        isRequired
+                    />
+
+                    <TextField
+                        label={<Req text="ZIP / Postal code" />}
+                        placeholder="e.g., 10001"
+                        width="280px"
+                        value={billingZip}
+                        onChange={(e) => onChangeField('billingZip', e.target.value)}
+                        isRequired
+                    />
+
+                    <TextField
+                        label={<Req text="Country" />}
+                        placeholder="e.g., United States"
+                        width="280px"
+                        value={billingCountry}
+                        onChange={(e) => onChangeField('billingCountry', e.target.value)}
+                        isRequired
+                    />
+                </div> */}
+
+                {/* Language selector (bottom of Profile page) */}
+                <div
+                    style={{
+                        marginTop: 20,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        gap: 8,
+                    }}
+                >
+                    <SelectField
+                        label="Language"
+                        width="280px"
+                        value={selectedLanguage}
+                        onChange={(e) => onChangeField('language', e.target.value)}
+                    >
+                        {(languageOptions || []).map((opt) => (
+                            <option key={opt} value={opt}>
+                                {opt}
+                            </option>
+                        ))}
+                    </SelectField>
+                </div>
 
                 <button
                     style={{
-                        marginTop: 8,
+                        marginTop: 12,
                         padding: '10px 16px',
                         borderRadius: 10,
                         border: canSave ? '1px solid #6b7280' : '1px solid #e5e7eb',
@@ -174,7 +231,7 @@ export default function ProfileTab({
                 <button
                     onClick={onSignOut}
                     style={{
-                        marginTop: 8,
+                        marginTop: 12,
                         marginLeft: 8,
                         padding: '10px 16px',
                         borderRadius: 10,
