@@ -320,64 +320,65 @@ export default function App() {
             setSaving(true);
 
             try {
-              // Always derive email from Cognito first
-              const cognitoEmail = (
+              // Derive email from Cognito / state
+              const cognitoEmail =
                 user?.attributes?.email ??
                 user?.signInDetails?.loginId ??
                 user?.username ??
-                email
-              );
+                email;
 
-              const clean = (s) => (s || '').toString().trim();
+              const clean = (val) => (val ?? '').toString().trim();
 
-              // If you KNOW your Profile model has an `identityId` field, keep this.
-              // If not, comment it out and remove `identityId` from the payload.
               const { identityId } = await fetchAuthSession();
 
+              // 🔑 ONLY send fields that exist on Profile in resource.ts
               const payload = {
                 firstName: clean(firstName),
                 lastName: clean(lastName),
                 email: clean(cognitoEmail),
                 phone: clean(phone),
                 organization: clean(organization),
-                billingAddress1: clean(billingAddress1),
-                billingAddress2: clean(billingAddress2),
-                billingCity: clean(billingCity),
-                billingState: clean(billingState),
-                billingZip: clean(billingZip),
-                billingCountry: clean(billingCountry),
                 language: clean(language || 'English') || 'English',
-                // 🔥 ONLY keep this line if your Profile model actually has `identityId`:
-                // identityId,
+                identityId,
+                // portNum, IPAddress, macAddress, etc. can be added later *if* you actually use them
               };
 
-              const { data } = profileId
+              const result = profileId
                 ? await client.models.Profile.update(
                   { id: profileId, ...payload },
                   { authMode: 'userPool' }
                 )
                 : await client.models.Profile.create(
-                  { ...payload },
+                  payload,
                   { authMode: 'userPool' }
                 );
 
-              // setProfileId(data.id);
+              // If GraphQL barfs, it’ll show up here instead of “data.id null”
+              if (result?.errors?.length) {
+                console.error('Profile save GraphQL errors:', result.errors);
+                throw new Error(result.errors[0].message || 'Failed to save profile');
+              }
+
+              const saved = result?.data;
+              if (!saved) {
+                throw new Error('Profile save returned no data');
+              }
+
+              setProfileId(saved.id);
               setLastUpdated(
-                data?.updatedAt || data?.createdAt || new Date().toISOString()
+                saved.updatedAt || saved.createdAt || new Date().toISOString()
               );
 
-              // Re-pull from backend so UI matches DB
               await loadLatest();
-
               setSavedToast(true);
               setTimeout(() => setSavedToast(false), 3000);
             } catch (err) {
               console.error('Save profile failed:', err);
-              alert('Could not save profile. Check the browser console for details.');
             } finally {
               setSaving(false);
             }
           };
+
 
 
           const handleUserChange = (nextUser) => {
