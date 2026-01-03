@@ -1,0 +1,32 @@
+# Project Sparta - requested upload list (24 max; tree.txt is your 25th upload slot)
+# One path or glob per line, relative to repo root. Lines starting with # are ignored.
+
+# --- Root essentials ---
+package.json
+package-lock.json
+vite.config.js
+index.html
+amplify.yml
+README.md
+amplify_outputs.json
+
+# --- Frontend essentials ---
+src/main.jsx
+src/App.jsx
+src/ProfileTab.jsx
+src/UploadsTab.jsx
+src/BillingTab.jsx
+src/VPNClientTab.jsx
+src/App.css
+src/index.css
+src/amplify_outputs.json
+
+# --- Public docs (only if present) ---
+public/privacy.html
+public/terms.html
+
+# --- Amplify core (Gen2) ---
+amplify/backend.ts
+amplify/auth/resource.ts
+amplify/data/resource.ts
+amplify/storage/resource.ts

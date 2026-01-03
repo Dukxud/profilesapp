@@ -1,0 +1,115 @@
+{
+    "auth": {
+      "user_pool_id": "us-east-2_N6InFJWsq",
+      "aws_region": "us-east-2",
+      "user_pool_client_id": "7p90a93tua7bfk6lu2hjp00in6",
+      "identity_pool_id": "us-east-2:e846f0a2-7056-4966-80e0-3a183b90089a",
+      "mfa_methods": [],
+      "standard_required_attributes": ["email"],
+      "username_attributes": ["email"],
+      "user_verification_types": ["email"],
+      "groups": [],
+      "mfa_configuration": "NONE",
+      "password_policy": {
+        "min_length": 8,
+        "require_lowercase": true,
+        "require_numbers": true,
+        "require_symbols": true,
+        "require_uppercase": true
+      },
+      "unauthenticated_identities_enabled": true
+    },
+    "data": {
+      "url": "https://rmmiyg4cufaoxe7s2dgickptfm.appsync-api.us-east-2.amazonaws.com/graphql",
+      "aws_region": "us-east-2",
+      "default_authorization_type": "AWS_IAM",
+      "authorization_types": ["AMAZON_COGNITO_USER_POOLS"],
+      "model_introspection": {
+        "version": 1,
+        "models": {
+          "Todo": {
+            "name": "Todo",
+            "fields": {
+              "id": { "name": "id", "isArray": false, "type": "ID", "isRequired": true, "attributes": [] },
+              "content": { "name": "content", "isArray": false, "type": "String", "isRequired": false, "attributes": [] },
+              "createdAt": { "name": "createdAt", "isArray": false, "type": "AWSDateTime", "isRequired": false, "attributes": [], "isReadOnly": true },
+              "updatedAt": { "name": "updatedAt", "isArray": false, "type": "AWSDateTime", "isRequired": false, "attributes": [], "isReadOnly": true }
+            },
+            "syncable": true,
+            "pluralName": "Todos",
+            "attributes": [
+              { "type": "model", "properties": {} },
+              { "type": "auth", "properties": { "rules": [ { "allow": "public", "provider": "iam", "operations": ["create","update","delete","read"] } ] } }
+            ],
+            "primaryKeyInfo": { "isCustomPrimaryKey": false, "primaryKeyFieldName": "id", "sortKeyFieldNames": [] }
+          },
+
+          "Profile": {
+            "name": "Profile",
+            "fields": {
+              "id": { "name": "id", "isArray": false, "type": "ID", "isRequired": true, "attributes": [] },
+              "firstName": { "name": "firstName", "isArray": false, "type": "String", "isRequired": true, "attributes": [] },
+              "lastName": { "name": "lastName", "isArray": false, "type": "String", "isRequired": true, "attributes": [] },
+              "email": { "name": "email", "isArray": false, "type": "AWSEmail", "isRequired": false, "attributes": [] },
+              "phone": { "name": "phone", "isArray": false, "type": "String", "isRequired": false, "attributes": [] },
+              "organization": { "name": "organization", "isArray": false, "type": "String", "isRequired": false, "attributes": [] },
+              "billingAddress1": { "name": "billingAddress1", "isArray": false, "type": "String", "isRequired": false, "attributes": [] },
+              "billingAddress2": { "name": "billingAddress2", "isArray": false, "type": "String", "isRequired": false, "attributes": [] },
+              "billingCity": { "name": "billingCity", "isArray": false, "type": "String", "isRequired": false, "attributes": [] },
+              "billingState": { "name": "billingState", "isArray": false, "type": "String", "isRequired": false, "attributes": [] },
+              "billingZip": { "name": "billingZip", "isArray": false, "type": "String", "isRequired": false, "attributes": [] },
+              "billingCountry": { "name": "billingCountry", "isArray": false, "type": "String", "isRequired": false, "attributes": [] },
+              "identityId": { "name": "identityId", "isArray": false, "type": "String", "isRequired": false, "attributes": [] },
+              "marketplaceCustomerId": { "name": "marketplaceCustomerId", "isArray": false, "type": "String", "isRequired": false, "attributes": [] },
+              "marketplaceProductCode": { "name": "marketplaceProductCode", "isArray": false, "type": "String", "isRequired": false, "attributes": [] },
+              "marketplaceLinkedAt": { "name": "marketplaceLinkedAt", "isArray": false, "type": "AWSDateTime", "isRequired": false, "attributes": [] },
+              "plan": { "name": "plan", "isArray": false, "type": "String", "isRequired": false, "attributes": [] },
+              "entitled": { "name": "entitled", "isArray": false, "type": "Boolean", "isRequired": false, "attributes": [] },
+              "contractEndAt": { "name": "contractEndAt", "isArray": false, "type": "AWSDateTime", "isRequired": false, "attributes": [] },
+              "createdAt": { "name": "createdAt", "isArray": false, "type": "AWSDateTime", "isRequired": false, "attributes": [], "isReadOnly": true },
+              "updatedAt": { "name": "updatedAt", "isArray": false, "type": "AWSDateTime", "isRequired": false, "attributes": [], "isReadOnly": true }
+            },
+            "syncable": true,
+            "pluralName": "Profiles",
+            "attributes": [
+              { "type": "model", "properties": {} },
+              {
+                "type": "auth",
+                "properties": {
+                  "rules": [
+                    {
+                      "allow": "owner",
+                      "ownerField": "owner",
+                      "operations": ["create", "update", "delete", "read"],
+                      "identityClaim": "cognito:username",
+                      "provider": "userPools"
+                    }
+                  ]
+                }
+              }
+            ],
+            "primaryKeyInfo": { "isCustomPrimaryKey": false, "primaryKeyFieldName": "id", "sortKeyFieldNames": [] }
+          }
+          
+        },
+        "enums": {},
+        "nonModels": {}
+      }
+    },
+    "storage": {
+      "aws_region": "us-east-2",
+      "bucket_name": "amplify-d3t4mgul7gqc89-main--uploadsbucket10132eb4-wuetsyfaxoji",
+      "dangerouslyConnectToHttpEndpointForTesting": false
+    },
+    "custom": {
+      "API": {
+        "marketplaceApi": {
+          "endpoint": "https://26bty6b7p1.execute-api.us-east-2.amazonaws.com/prod",
+          "region": "us-east-2",
+          "apiName": "marketplaceApi"
+        }
+      }
+    },
+    "version": "1.4"
+  }
+  

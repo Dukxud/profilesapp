@@ -239,7 +239,7 @@ export default function App() {
                   style={{ display: 'block', margin: '0 auto 6px' }}
                 />
                 <Heading level={3} marginTop="0.25rem">
-                  Project: SPARTA
+                  AI Vault
                 </Heading>
               </View>
             );

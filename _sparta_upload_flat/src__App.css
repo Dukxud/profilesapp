@@ -1,0 +1,85 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+/* Full-page centering for the sign-in card */
+.auth-shell {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  /* center horizontally */
+  align-items: flex-start;
+  /* top-align so zoom+scroll works */
+  position: relative;
+  padding: 24px 16px 40px;
+  box-sizing: border-box;
+}
+
+.brand-watermark {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  width: 128px !important;
+  /* hard stop */
+  height: auto !important;
+  max-width: 20vw;
+  max-height: 20vh;
+  object-fit: contain;
+  opacity: 0.22;
+  pointer-events: none;
+  filter: grayscale(40%);
+}
+
+
+/* Optional: center content after sign-in, too */
+.app-authed {
+  width: 720px;
+  /* <-- THIS is the key: fixed width */
+  max-width: 100%;
+  /* shrink on small screens */
+  margin: 0;
+  /* no extra auto-centering here */
+  padding: 24px;
+}
