@@ -32,8 +32,6 @@ export default function ProfileTab({
     onSave,
     onSignOut,
 }) {
-    const selectedLanguage = (language ?? 'English').toString();
-
     return (
         <>
             <div>
@@ -190,17 +188,17 @@ export default function ProfileTab({
                 {/* Language selector (bottom of Profile page) */}
                 <div
                     style={{
-                        marginTop: 20,
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'center',
                         gap: 8,
+                        marginTop: 8, // keep it like a normal line item, not a separate section
                     }}
                 >
                     <SelectField
                         label="Language"
                         width="280px"
-                        value={selectedLanguage}
+                        value={language || 'English'}
                         onChange={(e) => onChangeField('language', e.target.value)}
                     >
                         {(languageOptions || []).map((opt) => (
@@ -210,6 +208,16 @@ export default function ProfileTab({
                         ))}
                     </SelectField>
                 </div>
+
+                {/* Divider AFTER all profile fields (not above the selector) */}
+                <div
+                    style={{
+                        width: 280,
+                        height: 1,
+                        background: '#e5e7eb',
+                        margin: '12px auto 0 auto',
+                    }}
+                />
 
                 <button
                     style={{
