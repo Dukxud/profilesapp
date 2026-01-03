@@ -361,7 +361,7 @@ export default function App() {
                   { authMode: 'userPool' }
                 );
 
-              setProfileId(data.id);
+              // setProfileId(data.id);
               setLastUpdated(
                 data?.updatedAt || data?.createdAt || new Date().toISOString()
               );
