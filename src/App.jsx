@@ -238,9 +238,7 @@ export default function App() {
                   height={128}
                   style={{ display: 'block', margin: '0 auto 6px' }}
                 />
-                <Heading level={3} marginTop="0.25rem">
-                  AI Vault
-                </Heading>
+
               </View>
             );
           },
