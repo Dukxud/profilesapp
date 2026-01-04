@@ -1,5 +1,5 @@
 // src/App.jsx
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Authenticator, View, Heading } from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
 import { generateClient } from 'aws-amplify/data';
@@ -27,6 +27,7 @@ const LANGUAGE_OPTIONS = [
   'Arabic',
 ];
 
+const IDLE_MINS = 0.5;
 const TERMS_VERSION = '2025-11-18-v1';
 const TERMS_STORAGE_KEY = 'aivault_terms_version';
 
@@ -397,6 +398,7 @@ export default function App() {
             <>
               <main className="app-authed">
                 <AutoLoad user={user} onUserChange={handleUserChange} />
+                <AutoSignOutOnIdle user={user} onSignOut={handleSignOut} idleMs={IDLE_MINS * 60 * 1000} />
 
                 <nav
                   role="tablist"
@@ -543,3 +545,49 @@ function AutoLoad({ user, onUserChange }) {
   return null;
 }
 
+function AutoSignOutOnIdle({ user, onSignOut, idleMs = IDLE_MINS * 60 * 1000 }) {
+  const timerRef = useRef(null);
+
+  useEffect(() => {
+    if (!user) return;
+
+    const resetTimer = () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+      timerRef.current = setTimeout(() => {
+        onSignOut();
+      }, idleMs);
+    };
+
+    // Treat these as “activity”
+    const events = [
+      'mousemove',
+      'mousedown',
+      'keydown',
+      'scroll',
+      'touchstart',
+      'pointerdown',
+      'wheel',
+    ];
+
+    events.forEach((evt) =>
+      window.addEventListener(evt, resetTimer, { passive: true })
+    );
+
+    // When they come back to the tab, restart the timer
+    const onVisibility = () => {
+      if (document.visibilityState === 'visible') resetTimer();
+    };
+    document.addEventListener('visibilitychange', onVisibility);
+
+    // Start timer immediately on login
+    resetTimer();
+
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+      events.forEach((evt) => window.removeEventListener(evt, resetTimer));
+      document.removeEventListener('visibilitychange', onVisibility);
+    };
+  }, [user?.attributes?.sub, user?.userId, user?.username, idleMs, onSignOut]);
+
+  return null;
+}
