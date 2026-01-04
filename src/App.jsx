@@ -27,7 +27,8 @@ const LANGUAGE_OPTIONS = [
   'Arabic',
 ];
 
-const IDLE_MINS = 0.5;
+const IDLE_MINS = 5;
+const WARN_MINS = 1;
 const TERMS_VERSION = '2025-11-18-v1';
 const TERMS_STORAGE_KEY = 'aivault_terms_version';
 
@@ -398,7 +399,12 @@ export default function App() {
             <>
               <main className="app-authed">
                 <AutoLoad user={user} onUserChange={handleUserChange} />
-                <AutoSignOutOnIdle user={user} onSignOut={handleSignOut} idleMs={IDLE_MINS * 60 * 1000} />
+                <AutoSignOutOnIdle
+                  user={user}
+                  onSignOut={handleSignOut}
+                  idleMs={IDLE_MINS * 60 * 1000}
+                  warnMs={WARN_MINS * 60 * 1000}
+                />
 
                 <nav
                   role="tablist"
@@ -545,15 +551,56 @@ function AutoLoad({ user, onUserChange }) {
   return null;
 }
 
-function AutoSignOutOnIdle({ user, onSignOut, idleMs = IDLE_MINS * 60 * 1000 }) {
-  const timerRef = useRef(null);
+function AutoSignOutOnIdle({
+  user,
+  onSignOut,
+  idleMs = IDLE_MINS * 60 * 1000,
+  warnMs = WARN_MINS * 60 * 1000,
+}) {
+  const logoutTimerRef = useRef(null);
+  const warnTimerRef = useRef(null);
+  const tickRef = useRef(null);
+  const deadlineRef = useRef(0);
+
+  const [showWarn, setShowWarn] = useState(false);
+  const [secondsLeft, setSecondsLeft] = useState(0);
 
   useEffect(() => {
     if (!user) return;
 
+    const clearAll = () => {
+      if (logoutTimerRef.current) clearTimeout(logoutTimerRef.current);
+      if (warnTimerRef.current) clearTimeout(warnTimerRef.current);
+      if (tickRef.current) clearInterval(tickRef.current);
+      logoutTimerRef.current = null;
+      warnTimerRef.current = null;
+      tickRef.current = null;
+    };
+
+    const updateCountdown = () => {
+      const msLeft = Math.max(0, deadlineRef.current - Date.now());
+      setSecondsLeft(Math.ceil(msLeft / 1000));
+    };
+
     const resetTimer = () => {
-      if (timerRef.current) clearTimeout(timerRef.current);
-      timerRef.current = setTimeout(() => {
+      clearAll();
+      setShowWarn(false);
+      setSecondsLeft(0);
+
+      deadlineRef.current = Date.now() + idleMs;
+
+      // Schedule warning bubble
+      const warnDelay = Math.max(0, idleMs - warnMs);
+      warnTimerRef.current = setTimeout(() => {
+        setShowWarn(true);
+        updateCountdown();
+        tickRef.current = setInterval(updateCountdown, 250);
+      }, warnDelay);
+
+      // Schedule actual sign-out
+      logoutTimerRef.current = setTimeout(() => {
+        clearAll();
+        setShowWarn(false);
         onSignOut();
       }, idleMs);
     };
@@ -583,11 +630,39 @@ function AutoSignOutOnIdle({ user, onSignOut, idleMs = IDLE_MINS * 60 * 1000 }) 
     resetTimer();
 
     return () => {
-      if (timerRef.current) clearTimeout(timerRef.current);
+      clearAll();
       events.forEach((evt) => window.removeEventListener(evt, resetTimer));
       document.removeEventListener('visibilitychange', onVisibility);
     };
-  }, [user?.attributes?.sub, user?.userId, user?.username, idleMs, onSignOut]);
+  }, [user?.attributes?.sub, user?.userId, user?.username, idleMs, warnMs, onSignOut]);
 
-  return null;
+  if (!showWarn) return null;
+
+  return (
+    <div
+      role="status"
+      aria-live="polite"
+      style={{
+        position: 'fixed',
+        right: 16,
+        bottom: 16,
+        zIndex: 9999,
+        maxWidth: 340,
+        background: '#0f172a',
+        color: '#fff',
+        padding: '12px 14px',
+        borderRadius: 12,
+        boxShadow: '0 10px 25px rgba(0,0,0,0.25)',
+        border: '1px solid rgba(255,255,255,0.15)',
+      }}
+    >
+      <div style={{ fontWeight: 800, marginBottom: 6 }}>
+        You’re about to be signed out 😴
+      </div>
+      <div style={{ opacity: 0.9, lineHeight: 1.3 }}>
+        AFK timeout in <b>{secondsLeft}s</b>. Move your mouse / press a key to stay signed in.
+      </div>
+    </div>
+  );
 }
+
